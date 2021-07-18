@@ -28,7 +28,7 @@ public class Order {
     private Date endDate;
     private int quantity;
     private double total;
-    private char status;    //A=active, C=Complete
+    private String status;    //A=active, C=Complete
 
     public Order(ItemGroup itemGroup, Customer leader) {
         this.id = String.format("OR%03d\n", count++);
@@ -39,7 +39,7 @@ public class Order {
         this.endDate = new Date(createDate.getTime() + MILLIS_IN_A_DAY);
         this.quantity = 1;
         this.total = itemGroup.getPrice();
-        this.status = 'A';
+        this.status = "Active";
     }
 
     public long calculateTimeLeft() {
@@ -138,11 +138,11 @@ public class Order {
         this.total = total;
     }
 
-    public char getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(char status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 
