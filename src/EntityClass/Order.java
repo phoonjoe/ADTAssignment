@@ -30,6 +30,10 @@ public class Order {
     private double total;
     private String status;    //Waiting, active, completed
 
+    public Order() {
+        this.id = String.format("OR%03d", ++count);
+    }
+
     public Order(ItemGroup itemGroup, Customer leader) {
         this.id = String.format("OR%03d", ++count);
         this.itemGroup = itemGroup;
@@ -42,9 +46,22 @@ public class Order {
         this.status = "Waiting";
     }
 
-    public long calculateTimeLeft() {
+    //===========Specific for hard code data purpose only=================
+    public Order(ItemGroup itemGroup, Customer leader, Date createDate) {
+        this.id = String.format("OR%03d", ++count);
+        this.itemGroup = itemGroup;
+        this.orderMembersList = new OrderArrayList<>(100);
+        this.orderMembersList.add(leader);
+        this.createDate = createDate;
+        this.endDate = new Date(createDate.getTime() + MILLIS_IN_A_DAY);
+        this.quantity = 1;
+        this.total = itemGroup.getPrice();
+        this.status = "Waiting";
+    }
 
-        long diffInMillies = endDate.getTime() - createDate.getTime();
+    public long calculateTimeLeft() {
+        Date currentDate = new Date();
+        long diffInMillies = endDate.getTime() - currentDate.getTime();
         long diffenceInMinute = TimeUnit.MINUTES.convert(diffInMillies, TimeUnit.MILLISECONDS);
 
         long hours = diffenceInMinute / 60;
