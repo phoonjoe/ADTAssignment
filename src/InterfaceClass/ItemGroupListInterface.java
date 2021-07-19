@@ -14,7 +14,7 @@ public interface ItemGroupListInterface<T> {
 
     public T view();
 
-    public T view(int specificIndex);
+    public T view(int specificPosition);
 
     public void add(T newItemGroup);
 
@@ -22,13 +22,15 @@ public interface ItemGroupListInterface<T> {
 
     public T remove();
 
-    public T remove(int specificIndex);
+    public T remove(int specificPosition);
 
     public void clear();
 
-    public boolean replace(int specificIndex, T newItemGroup);
+    public boolean replace(int specificPosition, T newItemGroup);
 
     public boolean check(T itemGroup);
+
+    public int getCapacity();
 
     public int getTotalNumOfIndex();
 
