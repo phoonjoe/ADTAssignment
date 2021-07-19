@@ -20,7 +20,7 @@ public class StaffArrayList<T> implements staffListInterface<T> {
         staffArray = (T[]) new Object[capacity];
     }
 
-    @Override
+//    @Override
     public T view() {
         T lastStaff = null;
         if (isEmpty() == false) {
@@ -31,7 +31,7 @@ public class StaffArrayList<T> implements staffListInterface<T> {
         return lastStaff;
     }
 
-    @Override
+    //@Override
     public T view(int specificIndex) {
         T staff = null;
         if (isEmpty() == false) {
@@ -49,7 +49,7 @@ public class StaffArrayList<T> implements staffListInterface<T> {
 
     }
 
-    @Override
+    //@Override
     public void add(T newStaff) {
         if (isFull() == true) {
             doubleCapacity();
@@ -59,7 +59,7 @@ public class StaffArrayList<T> implements staffListInterface<T> {
 
     }
 
-    @Override
+    //@Override
     public boolean add(int specificPosition, T newStaff) {
 
         if (isFull() == true) {
@@ -77,7 +77,7 @@ public class StaffArrayList<T> implements staffListInterface<T> {
         return true;
     }
 
-    @Override
+   // @Override
     public T remove() {
         T staff = null;
         if (isEmpty() == false) {
@@ -92,7 +92,7 @@ public class StaffArrayList<T> implements staffListInterface<T> {
         return staff;
     }
 
-    @Override
+    //@Override
     public T remove(int specificIndex) {
         T staff = null;
         if (isEmpty() == false) {
@@ -118,7 +118,7 @@ public class StaffArrayList<T> implements staffListInterface<T> {
         indexSum = 0;
     }
 
-    @Override
+//    @Override
     public boolean replace(int specificIndex, T newStaff) {
 
         if ((specificIndex >= 1) && (specificIndex <= indexSum)) {
@@ -132,7 +132,7 @@ public class StaffArrayList<T> implements staffListInterface<T> {
 
     }
 
-    @Override
+//    @Override
     public boolean check(T staff) {
 
         for (int index = 0; (index < indexSum); index++) {
@@ -143,17 +143,17 @@ public class StaffArrayList<T> implements staffListInterface<T> {
         return false;
     }
 
-    @Override
+//    @Override
     public int getTotalNumOfIndex() {
         return indexSum;
     }
 
-    @Override
+//    @Override
     public boolean isEmpty() {
         return indexSum == 0;
     }
 
-    @Override
+//    @Override
     public boolean isFull() {
         return indexSum == staffArray.length;
     }
