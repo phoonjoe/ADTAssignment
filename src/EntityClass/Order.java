@@ -28,10 +28,10 @@ public class Order {
     private Date endDate;
     private int quantity;
     private double total;
-    private String status;    //A=active, C=Complete
+    private String status;    //Waiting, active, completed
 
     public Order(ItemGroup itemGroup, Customer leader) {
-        this.id = String.format("OR%03d\n", count++);
+        this.id = String.format("OR%03d", ++count);
         this.itemGroup = itemGroup;
         this.orderMembersList = new OrderArrayList<>(100);
         this.orderMembersList.add(leader);
@@ -39,7 +39,7 @@ public class Order {
         this.endDate = new Date(createDate.getTime() + MILLIS_IN_A_DAY);
         this.quantity = 1;
         this.total = itemGroup.getPrice();
-        this.status = "Active";
+        this.status = "Waiting";
     }
 
     public long calculateTimeLeft() {
@@ -104,6 +104,11 @@ public class Order {
 
     public void addIntoOrderMembersList(Customer customer) {
         orderMembersList.add(customer);
+        quantity++;
+        total = itemGroup.getPrice() * quantity;
+        if (quantity >= itemGroup.getMinimuimBuyer()) {
+            status = "Active";
+        }
     }
 
     public Date getCreateDate() {

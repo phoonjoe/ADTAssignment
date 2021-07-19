@@ -18,7 +18,7 @@ public class ItemGroup {
     private int minimuimBuyer;
 
     public ItemGroup(String name, double price, int minimuimBuyer) {
-        this.id = String.format("IG%03d\n", count++);
+        this.id = String.format("IG%03d", ++count);
         this.name = name;
         this.price = price;
         this.minimuimBuyer = minimuimBuyer;

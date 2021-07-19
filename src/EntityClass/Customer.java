@@ -21,7 +21,7 @@ public class Customer {
     private String phoneNumber;
 
     public Customer(String name, char gender, String address, String userName, String password, String phoneNumber) {
-        this.id = String.format("CU%03d\n", count++);
+        this.id = String.format("CU%03d", ++count);
         this.name = name;
         this.gender = gender;
         this.address = address;
