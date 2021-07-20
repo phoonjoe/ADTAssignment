@@ -24,11 +24,21 @@ public class Test {
 
     public static void main(String[] args) {
         Database database = new Database();
-        OrderArrayList<Order> orderArrayList = database.getOrderList();
-        OrderArrayList<Order> newArrayList = new OrderArrayList<>(orderArrayList.size());
+        CustomerArrayList<Customer> orderMembersList = database.getCustomerList();
+        String msg = String.format("%s\n", BORDER);
+        msg += String.format("\t\t\t\t\t\t\t\t\t\t   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+        msg += String.format("\t\t\t\t\t\t\t\t\t\t   #   ORDER MEMBERS DETAILS   #\n");
+        msg += String.format("\t\t\t\t\t\t\t\t\t\t   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+        msg += String.format("%s\n", BORDER);
+        System.out.print(msg);
+        System.out.printf("%s %20s %28s %27s %50s %67s\n", "No.", "AccountID", "Buyer Name", "Gender", "Address", "Phone Number");
+        System.out.printf("%s %20s %28s %27s %77s %40s\n", "---", "---------", "----------", "------", "--------------------------------------------------------", "------------");
 
-        Object accountType = new Order();
-        System.out.println(accountType.getClass().equals(Order.class));
+        for (int position = 1; position <= orderMembersList.getMemberAmount(); position++) {
+            Customer member = orderMembersList.getMember(position);
+            System.out.printf("%d. %20s %28s %25c %80s %40s\n", position, member.getId(), member.getName(), member.getGender(), member.getAddress(), member.getPhoneNumber());
+            System.out.printf("--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
+        }
 
     }
 

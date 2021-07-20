@@ -44,7 +44,7 @@ public class OrderArrayList<T> implements OrderListInterface<T> {
             arrayList[position - 1] = object;
             totalElements++;
         } else {
-            throw new IndexOutOfBoundsException(String.format("Invalid position!Please enter valid position between 1-%d(Existing) or %d(New).", totalElements, totalElements + 1));
+            throw new IndexOutOfBoundsException(String.format("Invalid position(%d)!Please enter valid position between 1-%d(Existing) or %d(New).", position, totalElements, totalElements + 1));
         }
 
         return true;
@@ -83,7 +83,7 @@ public class OrderArrayList<T> implements OrderListInterface<T> {
 
             totalElements--;
         } else {
-            throw new IndexOutOfBoundsException(String.format("Invalid position!Please enter valid position between 1-%d(Existing).", totalElements));
+            throw new NullPointerException(String.format("Array list is empty!"));
         }
 
         return object;
@@ -102,7 +102,7 @@ public class OrderArrayList<T> implements OrderListInterface<T> {
                 }
                 totalElements--;
             } else {
-                throw new IndexOutOfBoundsException(String.format("Invalid position!Please enter valid position between 1-%d(Existing).", totalElements));
+                throw new IndexOutOfBoundsException(String.format("Invalid position(%d)!Please enter valid position between 1-%d(Existing).", position, totalElements));
             }
         } else {
             throw new NullPointerException("The list is empty!");
@@ -117,7 +117,7 @@ public class OrderArrayList<T> implements OrderListInterface<T> {
         if ((position >= 1) && (position <= totalElements)) {
             arrayList[position - 1] = object;
         } else {
-            throw new IndexOutOfBoundsException(String.format("Invalid position!Please enter valid position between 1-%d(Existing).", totalElements));
+            throw new IndexOutOfBoundsException(String.format("Invalid position(%d)!Please enter valid position between 1-%d(Existing).", position, totalElements));
         }
 
     }
@@ -146,7 +146,7 @@ public class OrderArrayList<T> implements OrderListInterface<T> {
             if ((position >= 1) && (position <= totalElements)) {
                 object = arrayList[position - 1];
             } else {
-                throw new IndexOutOfBoundsException(String.format("Invalid position!Please enter valid position between 1-%d(Existing).", totalElements));
+                throw new IndexOutOfBoundsException(String.format("Invalid position(%d)!Please enter valid position between 1-%d(Existing).", position, totalElements));
             }
         } else {
             throw new NullPointerException("The list is empty!");

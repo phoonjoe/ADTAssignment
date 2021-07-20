@@ -72,7 +72,6 @@ public class GroupBuyMain {
     }
 
     private void checkTimeLeft() {
-        OrderArrayList<Order> orderList = database.getOrderList();
         for (int position = 1; position <= database.getOrderList().size(); position++) {
             Order order = database.getOrderList().viewElement(position);
             if (order.calculateTimeLeft() <= 0 && !order.getStatus().equals("Completed")) {
@@ -135,17 +134,24 @@ public class GroupBuyMain {
                     if (complete == 1) {
                         System.out.printf("\nAre you sure you want to complete this order, confirm(Y/N)? ");
                         if (scan.nextLine().toUpperCase().charAt(0) == 'Y') {
-
                             selectedOrder.completeOrder(selectCourierService());
-
                             displayDetailsOrder(selectedOrder);
-                            System.out.printf("Press ANY key to continue...");
-                            scan.nextLine();
+                            System.out.printf("Press ANY key back to continue...");
                             return false;
                         }
                     }
 
                 } else {
+                    System.out.printf("\n%s\n", SHORT_LINE);
+                    System.out.printf("Enter a number:\n"
+                            + "-------------------------\n");
+                    System.out.printf("# 1      (View Joined Buyer(s) Details)\n");
+                    System.out.printf("# Others (Back)\n> ");
+                    int reply = scan.nextInt();
+                    scan.nextLine();
+                    if (reply == 1) {
+                        displayJoinedBuyer(selectedOrder.getOrderMembers());
+                    }
                     System.out.printf("Press ANY key back to continue...");
                     scan.nextLine();
                 }
@@ -153,6 +159,23 @@ public class GroupBuyMain {
             }
         }
         return true;
+    }
+
+    private void displayJoinedBuyer(CustomerArrayList<Customer> orderMembersList) {
+        String msg = String.format("%s\n", BORDER);
+        msg += String.format("\t\t\t\t\t\t\t\t\t\t   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+        msg += String.format("\t\t\t\t\t\t\t\t\t\t   #   ORDER MEMBERS DETAILS   #\n");
+        msg += String.format("\t\t\t\t\t\t\t\t\t\t   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+        msg += String.format("%s\n", BORDER);
+        System.out.print(msg);
+        System.out.printf("%s %20s %28s %27s %50s %67s\n", "No.", "AccountID", "Buyer Name", "Gender", "Address", "Phone Number");
+        System.out.printf("%s %20s %28s %27s %77s %40s\n", "---", "---------", "----------", "------", "--------------------------------------------------------", "------------");
+
+        for (int position = 1; position <= orderMembersList.getMemberAmount(); position++) {
+            Customer member = orderMembersList.getMember(position);
+            System.out.printf("%d. %20s %28s %25c %80s %40s\n", position, member.getId(), member.getName(), member.getGender(), member.getAddress(), member.getPhoneNumber());
+            System.out.printf("--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
+        }
     }
 
     private Shipping selectCourierService() {
