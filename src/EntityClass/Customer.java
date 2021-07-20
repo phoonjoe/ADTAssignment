@@ -16,16 +16,16 @@ public class Customer {
     private String name;
     private char gender;  //M=Male, F=Female
     private String address;
-    private String userName;
+    private String username;
     private String password;
     private String phoneNumber;
 
-    public Customer(String name, char gender, String address, String userName, String password, String phoneNumber) {
+    public Customer(String name, char gender, String address, String username, String password, String phoneNumber) {
         this.id = String.format("CU%03d", ++count);
         this.name = name;
         this.gender = gender;
         this.address = address;
-        this.userName = userName;
+        this.username = username;
         this.password = password;
         this.phoneNumber = phoneNumber;
     }
@@ -70,12 +70,12 @@ public class Customer {
         this.address = address;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getUsername() {
+        return username;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getPassword() {

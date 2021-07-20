@@ -23,7 +23,7 @@ public class Order {
     private String id;
     private ItemGroup itemGroup;
     private Shipping shipping;
-    private OrderArrayList<Customer> orderMembersList;
+    private CustomerArrayList<Customer> orderMembersList;
     private Date createDate;
     private Date endDate;
     private int quantity;
@@ -37,8 +37,8 @@ public class Order {
     public Order(ItemGroup itemGroup, Customer leader) {
         this.id = String.format("OR%03d", ++count);
         this.itemGroup = itemGroup;
-        this.orderMembersList = new OrderArrayList<>(100);
-        this.orderMembersList.add(leader);
+        this.orderMembersList = new CustomerArrayList<>(100);
+        this.orderMembersList.addMember(leader);
         this.createDate = new Date();
         this.endDate = new Date(createDate.getTime() + MILLIS_IN_A_DAY);
         this.quantity = 1;
@@ -50,8 +50,8 @@ public class Order {
     public Order(ItemGroup itemGroup, Customer leader, Date createDate) {
         this.id = String.format("OR%03d", ++count);
         this.itemGroup = itemGroup;
-        this.orderMembersList = new OrderArrayList<>(100);
-        this.orderMembersList.add(leader);
+        this.orderMembersList = new CustomerArrayList<>(100);
+        this.orderMembersList.addMember(leader);
         this.createDate = createDate;
         this.endDate = new Date(createDate.getTime() + MILLIS_IN_A_DAY);
         this.quantity = 1;
@@ -59,12 +59,22 @@ public class Order {
         this.status = "Waiting";
     }
 
+    public void completeOrder(Shipping shipping) {
+        this.shipping = shipping;
+        this.endDate = new Date();
+        this.total += shipping.calculateFee(quantity);
+        this.status = "Completed";
+    }
+
     public long calculateTimeLeft() {
         Date currentDate = new Date();
         long diffInMillies = endDate.getTime() - currentDate.getTime();
+        if (diffInMillies < 0) {
+            return 0;
+        }
         long diffenceInMinute = TimeUnit.MINUTES.convert(diffInMillies, TimeUnit.MILLISECONDS);
-
         long hours = diffenceInMinute / 60;
+
         if (diffenceInMinute % 60 != 0) {
             hours++;
         }
@@ -111,16 +121,16 @@ public class Order {
         this.shipping = shipping;
     }
 
-    public OrderArrayList<Customer> getOrderMembers() {
+    public CustomerArrayList<Customer> getOrderMembers() {
         return orderMembersList;
     }
 
-    public void setOrderMembers(OrderArrayList<Customer> orderMembersList) {
+    public void setOrderMembers(CustomerArrayList<Customer> orderMembersList) {
         this.orderMembersList = orderMembersList;
     }
 
     public void addIntoOrderMembersList(Customer customer) {
-        orderMembersList.add(customer);
+        orderMembersList.addMember(customer);
         quantity++;
         total = itemGroup.getPrice() * quantity;
         if (quantity >= itemGroup.getMinimuimBuyer()) {
