@@ -132,7 +132,7 @@ public class GroupBuyMain {
                     int complete = scan.nextInt();
                     scan.nextLine();
                     if (complete == 1) {
-                        System.out.printf("\nAre you sure you want to complete this order, confirm(Y/N)? ");
+                        System.out.printf("\nAre you sure you want to complete this order?(Y/N) ");
                         if (scan.nextLine().toUpperCase().charAt(0) == 'Y') {
                             selectedOrder.completeOrder(selectCourierService());
                             displayDetailsOrder(selectedOrder);
@@ -384,17 +384,24 @@ public class GroupBuyMain {
         int position = scan.nextInt();
         scan.nextLine();
         if (position <= no && position > 0) {
-            database.updateOrderByAddNewMember(orderListByItemGroupId.viewElement(position).getId(), loginCustomer);
-            displayDetailsOrder(orderListByItemGroupId.viewElement(position));
-        } else if (position == -1) {
-            Order newOrder = new Order(itemGroup, loginCustomer);
-            database.addIntoOrderList(newOrder);
-            displayDetailsOrder(newOrder);
-        }
+            System.out.printf("\nAre you sure you want to join No.%d group?(Y/N)", position);
+            if (scan.nextLine().toUpperCase().charAt(0) == 'Y') {
+                database.updateOrderByAddNewMember(orderListByItemGroupId.viewElement(position).getId(), loginCustomer);
+                displayDetailsOrder(orderListByItemGroupId.viewElement(position));
 
-        if (position > 0 && position <= no || position == -1) {
-            System.out.printf("Press ANY key to continue...");
-            scan.nextLine();
+                System.out.printf("Press ANY key to continue...");
+                scan.nextLine();
+            }
+        } else if (position == -1) {
+            System.out.printf("\nAre you sure you want to create new group?(Y/N)");
+            if (scan.nextLine().toUpperCase().charAt(0) == 'Y') {
+                Order newOrder = new Order(itemGroup, loginCustomer);
+                database.addIntoOrderList(newOrder);
+                displayDetailsOrder(newOrder);
+
+                System.out.printf("Press ANY key to continue...");
+                scan.nextLine();
+            }
         }
 
         return true;
