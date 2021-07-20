@@ -15,11 +15,11 @@ public interface ShippingListInterface<T> {
 
     public T deleteShipping(int givenPosition);
 
+    public boolean replaceShipping(int givenPosition, T newShipping);
+
     public void clear();
 
     public int getNumberOfShipping();
-
-    public boolean replaceShipping(int givenPosition, T newShipping);
 
     public boolean isShippingListEmpty();
 

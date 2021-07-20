@@ -40,12 +40,12 @@ public class ItemGroupList<T> implements ItemGroupListInterface<T> {
     }
 
     @Override
-    public T view(int specificIndex) {
+    public T view(int specificPosition) {
         T itemGroup = null;
         if (isEmpty() == false) {
 
-            if ((specificIndex >= 1) && (specificIndex <= totalNumOfIndex + 1)) {
-                itemGroup = array[specificIndex - 1];
+            if ((specificPosition >= 1) && (specificPosition <= totalNumOfIndex + 1)) {
+                itemGroup = array[specificPosition - 1];
 
             } else {
                 System.out.println("Error! Specified Index Does Not Exist.");
@@ -101,14 +101,14 @@ public class ItemGroupList<T> implements ItemGroupListInterface<T> {
     }
 
     @Override
-    public T remove(int specificIndex) {
+    public T remove(int specificPosition) {
         T itemGroup = null;
         if (isEmpty() == false) {
-            if ((specificIndex >= 1) && (specificIndex <= totalNumOfIndex)) {
-                itemGroup = array[specificIndex - 1];
+            if ((specificPosition >= 1) && (specificPosition <= totalNumOfIndex)) {
+                itemGroup = array[specificPosition - 1];
 
-                if (specificIndex < totalNumOfIndex) {
-                    removeGap(specificIndex);
+                if (specificPosition < totalNumOfIndex) {
+                    removeGap(specificPosition);
                 }
 
                 totalNumOfIndex--;
@@ -127,10 +127,10 @@ public class ItemGroupList<T> implements ItemGroupListInterface<T> {
     }
 
     @Override
-    public boolean replace(int specificIndex, T newItemGroup) {
+    public boolean replace(int specificPosition, T newItemGroup) {
 
-        if ((specificIndex >= 1) && (specificIndex <= totalNumOfIndex)) {
-            array[specificIndex - 1] = newItemGroup;
+        if ((specificPosition >= 1) && (specificPosition <= totalNumOfIndex)) {
+            array[specificPosition - 1] = newItemGroup;
         } else {
             System.out.println("Specified Index Does Not Exist! Failed To Replace With New Item.");
             return false;
@@ -154,6 +154,11 @@ public class ItemGroupList<T> implements ItemGroupListInterface<T> {
     @Override
     public int getTotalNumOfIndex() {
         return totalNumOfIndex;
+    }
+
+    @Override
+    public int getCapacity() {
+        return array.length;
     }
 
     @Override
@@ -195,9 +200,9 @@ public class ItemGroupList<T> implements ItemGroupListInterface<T> {
         }
     }
 
-    private void removeGap(int specificIndex) {
+    private void removeGap(int specificPosition) {
 
-        int removedIndex = specificIndex - 1;
+        int removedIndex = specificPosition - 1;
         int lastIndex = totalNumOfIndex - 1;
 
         for (int index = removedIndex; index < lastIndex; index++) {

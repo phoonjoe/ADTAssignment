@@ -25,17 +25,27 @@ public class ShippingArrayList<T> implements ShippingListInterface<T> {
     public T readShipping() {
         T result = null;
 
-        result = shippingArray[0];
-
+        if (isShippingListEmpty() == false) {
+            result = shippingArray[0];
+            System.out.printf("Shipping found! Retrieving...\n");
+        } else {
+            System.out.printf("Shipping list is currently empty!\n");
+        }
         return result;
     }
 
     @Override
     public T readShipping(int givenPosition) {
         T result = null;
-
-        if ((givenPosition >= 1) && (givenPosition <= numberOfShipping)) {
-            result = shippingArray[givenPosition - 1];
+        if (isShippingListEmpty() == false) {
+            if ((givenPosition >= 1) && (givenPosition <= numberOfShipping)) {
+                result = shippingArray[givenPosition - 1];
+                System.out.printf("Shipping found! Retrieving...\n");
+            } else {
+                System.out.printf("Error! Shipping does not exist!\n");
+            }
+        } else {
+            System.out.printf("Shipping list is currently empty!\n");
         }
         return result;
     }
@@ -47,11 +57,12 @@ public class ShippingArrayList<T> implements ShippingListInterface<T> {
         }
         shippingArray[numberOfShipping] = newShipping;
         numberOfShipping++;
+        System.out.printf("New shipping added successfully!\n");
     }
 
     @Override
     public boolean addNewShipping(int newPosition, T newShipping) {
-        boolean isFinish = true;
+        boolean finishAdding = true;
         if (isShippingListFull()) {
             doubleArray();
         }
@@ -59,25 +70,47 @@ public class ShippingArrayList<T> implements ShippingListInterface<T> {
             makeRoom(newPosition);
             shippingArray[newPosition - 1] = newShipping;
             numberOfShipping++;
+            System.out.printf("New shipping added successfully!\n");
         } else {
-            isFinish = false;
+            finishAdding = false;
+            System.out.printf("Shipping failed to add!\n");
         }
-        return isFinish;
+        return finishAdding;
     }
 
     @Override
     public T deleteShipping(int givenPosition) {
         T result = null;
+        if (isShippingListEmpty() == false) {
+            if ((givenPosition >= 1) && (givenPosition <= numberOfShipping)) {
+                result = shippingArray[givenPosition - 1];
 
-        if ((givenPosition >= 1) && (givenPosition <= numberOfShipping)) {
-            result = shippingArray[givenPosition - 1];
-
-            if (givenPosition < numberOfShipping) {
-                removeGap(givenPosition);
+                if (givenPosition < numberOfShipping) {
+                    removeGap(givenPosition);
+                }
+                numberOfShipping--;
+                System.out.printf("Shipping deleted successfully!\n");
+            } else {
+                System.out.printf("Error! Shipping does not exist!\n");
             }
-            numberOfShipping--;
+        } else {
+            System.out.printf("Shipping list is currently empty!\n");
         }
         return result;
+    }
+
+    @Override
+    public boolean replaceShipping(int givenPosition, T newShipping) {
+        boolean finishReplacing = true;
+
+        if ((givenPosition >= 1) && (givenPosition <= numberOfShipping)) {
+            shippingArray[givenPosition - 1] = newShipping;
+            System.out.printf("Shipping replaced successfully!\n");
+        } else {
+            finishReplacing = false;
+            System.out.printf("Shipping failed to replace!\n");
+        }
+        return finishReplacing;
     }
 
     @Override
@@ -88,18 +121,6 @@ public class ShippingArrayList<T> implements ShippingListInterface<T> {
     @Override
     public int getNumberOfShipping() {
         return numberOfShipping;
-    }
-
-    @Override
-    public boolean replaceShipping(int givenPosition, T newShipping) {
-        boolean isFinish = true;
-
-        if ((givenPosition >= 1) && (givenPosition <= numberOfShipping)) {
-            shippingArray[givenPosition - 1] = newShipping;
-        } else {
-            isFinish = false;
-        }
-        return isFinish;
     }
 
     @Override
