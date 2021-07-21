@@ -2,6 +2,9 @@
 import DatabaseClass.Database;
 import EntityClass.*;
 import ImplementationClass.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Scanner;
 
 /*
@@ -16,6 +19,7 @@ import java.util.Scanner;
 public class GroupBuyMain {
 
     private Customer loginCustomer;
+    private Staff loginStaff;
     private Database database;
     private Scanner scan;
     private final String BORDER = "========================================================================================================================================================================================================";
@@ -69,6 +73,118 @@ public class GroupBuyMain {
                     } while (backToInvolvedGroups);
             }
         } while (!backToMenu);
+    }
+
+    public void generateSalesReport(Database paraDatabase) {
+        scan = new Scanner(System.in);
+        this.database = paraDatabase;
+
+        OrderArrayList<Order> orderList = database.getOrderList();
+        ItemGroupList<ItemGroup> itemGroupList = new ItemGroupList<>(database.getItemGroupList().getTotalNumOfIndex());
+        OrderArrayList<Integer> quantitySoldList = new OrderArrayList<>(database.getItemGroupList().getTotalNumOfIndex());
+
+        try {
+            int no = 0;
+            double total = 0;
+            double previousTotal = 0;
+            Date firstDate = new Date(1);
+            SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+
+            System.out.printf("\nEnter start date (dd/MM/yyyy): ");
+            String startDateInString = scan.nextLine();
+            System.out.printf("Enter end   date (dd/MM/yyyy): ");
+            String endDateInString = scan.nextLine();
+
+            Date startDate = format.parse(startDateInString);
+            Date endDate = format.parse(endDateInString);
+            endDate = new Date(endDate.getTime() + 86399999);
+
+            long periodLong = endDate.getTime() - startDate.getTime();
+
+            Date previousStartDate = new Date(startDate.getTime() - periodLong);
+            Date previousEndDate = new Date(endDate.getTime() - periodLong - 1);
+
+            if (startDate.compareTo(firstDate) < 0 || endDate.compareTo(firstDate) < 0) {
+                System.out.printf("\n*******************************************\n");
+                System.out.printf("* The date need to start from: %s *\n", format.format(firstDate));
+                System.out.printf("*******************************************\n");
+            } else {
+
+                String msg = String.format("%s\n", BORDER);
+                msg += String.format("\t\t\t\t\t\t\t\t\t\t  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+                msg += String.format("\t\t\t\t\t\t\t\t\t\t  #   SALES REPORT(%10s - %10s)   #\n", format.format(startDate), format.format(endDate));
+                msg += String.format("\t\t\t\t\t\t\t\t\t\t  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+                msg += String.format("%s\n", BORDER);
+                msg += String.format("%3s %20s %28s %40s %41s %42s\n", "No.", "ProductID", "Product Name", "Quantity Sold", "Price(RM)", "Subtotal(RM)");
+                msg += String.format("%3s %20s %28s %40s %41s %42s\n", "---", "---------", "------------", "-------------", "---------", "------------");
+
+                //==================Calculate previous period sales which have the same period long==================
+                for (int position = 1; position <= orderList.size(); position++) {
+                    Order order = orderList.viewElement(position);
+                    if (order.getStatus().equals("Completed") && order.getEndDate().compareTo(previousStartDate) >= 0 && order.getEndDate().compareTo(previousEndDate) <= 0) {
+                        ItemGroup itemGroup = orderList.viewElement(position).getItemGroup();
+                        boolean foundInList = false;
+                        for (int itemGroupPosition = 1; itemGroupPosition <= itemGroupList.getTotalNumOfIndex(); itemGroupPosition++) {
+                            if (itemGroup.getId().equals(itemGroupList.view(itemGroupPosition).getId())) {
+                                previousTotal += order.getQuantity() * itemGroup.getPrice();
+                                foundInList = true;
+                            }
+                        }
+                        if (!foundInList) {
+                            previousTotal += order.getQuantity() * itemGroup.getPrice();
+                        }
+                    }
+                }
+
+                //==================Calculate sales within given date==================
+                for (int position = 1; position <= orderList.size(); position++) {
+                    Order order = orderList.viewElement(position);
+                    if (order.getStatus().equals("Completed") && order.getEndDate().compareTo(startDate) >= 0 && order.getEndDate().compareTo(endDate) <= 0) {
+                        ItemGroup itemGroup = orderList.viewElement(position).getItemGroup();
+                        boolean foundInList = false;
+                        for (int itemGroupPosition = 1; itemGroupPosition <= itemGroupList.getTotalNumOfIndex(); itemGroupPosition++) {
+                            if (itemGroup.getId().equals(itemGroupList.view(itemGroupPosition).getId())) {
+                                int currentQuantity = quantitySoldList.viewElement(itemGroupPosition);
+                                currentQuantity += order.getQuantity();
+                                total += order.getQuantity() * itemGroup.getPrice();
+                                quantitySoldList.replace(currentQuantity, itemGroupPosition);
+                                foundInList = true;
+                            }
+                        }
+                        if (!foundInList) {
+                            itemGroupList.add(itemGroup);
+                            quantitySoldList.add(order.getQuantity());
+                            total += order.getQuantity() * itemGroup.getPrice();
+                        }
+                    }
+                }
+
+                for (int position = 1; position <= itemGroupList.getTotalNumOfIndex(); position++) {
+                    ItemGroup itemGroup = itemGroupList.view(position);
+                    msg += String.format("%d. %20s %28s %35d %45.2f %41.2f\n", ++no, itemGroup.getId(), itemGroup.getName(), quantitySoldList.viewElement(position), itemGroup.getPrice(), itemGroup.getPrice() * quantitySoldList.viewElement(position));
+                }
+
+                if (no == 0) {
+                    System.out.printf("\n**********************************************************\n");
+                    System.out.printf("* No sales order found during %s to %s *\n", format.format(startDate), format.format(endDate));
+                    System.out.printf("**********************************************************\n");
+                } else {
+                    msg += String.format("%s\n"
+                            + "%161s: RM %10.2f (%+.2f%%)\n", "---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------"
+                            + "", "Total", total, previousTotal == 0 ? 100 : (total - previousTotal) / previousTotal * 100);
+
+                    System.out.print(msg);
+                }
+                System.out.printf("Press ANY key back to continue...");
+                scan.nextLine();
+            }
+        } catch (ParseException ex) {
+            System.out.printf("\n******************************************************\n");
+            System.out.printf("* %s is a invalid date format *\n", ex.getMessage());
+            System.out.printf("******************************************************\n");
+
+        }
+
     }
 
     private void checkTimeLeft() {

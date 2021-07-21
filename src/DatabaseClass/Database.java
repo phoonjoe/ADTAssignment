@@ -57,10 +57,17 @@ public class Database {
         orderList.add(new Order(itemGroupList.view(1), customerList.getMember(1), new Date(currentDate.getTime() - MILLIS_IN_A_HOUR)));         //OR001
         orderList.add(new Order(itemGroupList.view(1), customerList.getMember(2), new Date(currentDate.getTime() - MILLIS_IN_A_HOUR * 10)));    //OR002
         orderList.add(new Order(itemGroupList.view(2), customerList.getMember(3), new Date(currentDate.getTime() - MILLIS_IN_A_HOUR * 23)));    //OR003
+        orderList.add(new Order(itemGroupList.view(2), customerList.getMember(3), new Date(currentDate.getTime() - MILLIS_IN_A_HOUR * 24)));    //OR004
 
-        //Completed Order 1
+        //Complete OR001 at current time
         orderList.viewElement(1).addIntoOrderMembersList(customerList.getMember(3));
         orderList.viewElement(1).completeOrder(shippingList.readShipping(1));
+
+        //Complete OR004 at 21 hour ago
+        orderList.viewElement(4).addIntoOrderMembersList(customerList.getMember(1));
+        orderList.viewElement(4).addIntoOrderMembersList(customerList.getMember(2));
+        orderList.viewElement(4).completeOrder(shippingList.readShipping(1));
+        orderList.viewElement(4).setEndDate(new Date(currentDate.getTime() - MILLIS_IN_A_HOUR * 21));
 
     }
 
