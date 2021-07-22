@@ -1,7 +1,5 @@
 
-import DatabaseClass.Database;
-import EntityClass.*;
-import ImplementationClass.*;
+import java.io.Console;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
@@ -23,23 +21,15 @@ public class Test {
     private static final String BORDER = "========================================================================================================================================================================================================";
 
     public static void main(String[] args) {
-        Database database = new Database();
-        CustomerArrayList<Customer> orderMembersList = database.getCustomerList();
-        String msg = String.format("%s\n", BORDER);
-        msg += String.format("\t\t\t\t\t\t\t\t\t\t   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
-        msg += String.format("\t\t\t\t\t\t\t\t\t\t   #   ORDER MEMBERS DETAILS   #\n");
-        msg += String.format("\t\t\t\t\t\t\t\t\t\t   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
-        msg += String.format("%s\n", BORDER);
-        System.out.print(msg);
-        System.out.printf("%s %20s %28s %27s %50s %67s\n", "No.", "AccountID", "Buyer Name", "Gender", "Address", "Phone Number");
-        System.out.printf("%s %20s %28s %27s %77s %40s\n", "---", "---------", "----------", "------", "--------------------------------------------------------", "------------");
-
-        for (int position = 1; position <= orderMembersList.getMemberAmount(); position++) {
-            Customer member = orderMembersList.getMember(position);
-            System.out.printf("%d. %20s %28s %25c %80s %40s\n", position, member.getId(), member.getName(), member.getGender(), member.getAddress(), member.getPhoneNumber());
-            System.out.printf("--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
+        Console console = System.console();
+        if (console == null) {
+            System.out.println("Couldn't get Console instance");
+            System.exit(0);
         }
 
+        console.printf("Testing password%n");
+        char[] passwordArray = console.readPassword("Enter your secret password: ");
+        console.printf("Password entered was: %s%n", new String(passwordArray));
     }
 
     public static void calculateRemainTime(Date createDate, Date endDate) {

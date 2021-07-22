@@ -96,6 +96,7 @@ public class SystemMain {
             scan.nextLine();
             switch (menu) {
                 case 0:
+                    System.out.printf("\n[ LOGGED OUT ]\n\n");
                     loop = false;
                     break;
                 case 1:
@@ -118,19 +119,22 @@ public class SystemMain {
             System.out.printf("Select Menu:\n"
                     + "-------------------------\n"
                     + "1. You Gay\n"
-                    + "2. : ]\n"
+                    + "2. Generate Sales Report By Date\n"
                     + "0. Logout\n"
                     + "> ");
             int menu = scan.nextInt();
             scan.nextLine();
             switch (menu) {
                 case 0:
+                    System.out.printf("\n[ LOGGED OUT ]\n\n");
                     loop = false;
                     break;
                 case 1:
+                    maintainItemGroup.maintainItemGroup(database, loginStaff);
                     break;
                 case 2:
-                    maintainItemGroup.maintainItemGroup(database, loginStaff);
+
+                    groupBuyMain.generateSalesReport(database);
                     break;
 
             }
