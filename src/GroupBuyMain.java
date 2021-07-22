@@ -319,7 +319,7 @@ public class GroupBuyMain {
                     + "> ", no);
             int position = scan.nextInt();
             if (position <= no && position > 0) {
-                return databaseItemGroupList.view(position);
+                return itemGroupListByKeyword.view(position);
             } else {
                 return null;
             }

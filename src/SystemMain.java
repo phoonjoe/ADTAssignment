@@ -19,11 +19,12 @@ public class SystemMain {
     private static Database database;
     private static Scanner scan;
     private static GroupBuyMain groupBuyMain;
-
+    private static MaintainItemGroup maintainItemGroup;
     private static final String SHORT_LINE = "=========================";
 
     public static void main(String[] args) {
         groupBuyMain = new GroupBuyMain();
+        maintainItemGroup = new MaintainItemGroup();
         scan = new Scanner(System.in);
         database = new Database();
 
@@ -129,6 +130,7 @@ public class SystemMain {
                 case 1:
                     break;
                 case 2:
+                    maintainItemGroup.maintainItemGroup(database, loginStaff);
                     break;
 
             }

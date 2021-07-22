@@ -7,7 +7,7 @@ package EntityClass;
 
 /**
  *
- * @author Joe Phoon
+ * @author Gan Hao Xian
  */
 public class ItemGroup {
 
@@ -16,6 +16,9 @@ public class ItemGroup {
     private String name;
     private double price;
     private int minimuimBuyer;
+
+    public ItemGroup() {
+    }
 
     public ItemGroup(String name, double price, int minimuimBuyer) {
         this.id = String.format("IG%03d", ++count);

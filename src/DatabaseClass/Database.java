@@ -33,6 +33,10 @@ public class Database {
         itemGroupList.add(new ItemGroup("Nice Test", 30.00, 2));
         itemGroupList.add(new ItemGroup("Tarkov GG", 24.00, 3));
         itemGroupList.add(new ItemGroup("POE Lets Go", 534.00, 2));
+        itemGroupList.add(new ItemGroup("MEME", 30.00, 2));
+        itemGroupList.add(new ItemGroup("WANG ZHE", 24.00, 3));
+        itemGroupList.add(new ItemGroup("SHANG GUAN", 534.00, 2));
+        itemGroupList.add(new ItemGroup("GENSHIN", 30.00, 2));
 
         // ============Customer============
         customerList = new CustomerArrayList<>();
@@ -70,6 +74,14 @@ public class Database {
 
     public void addIntoItemGroupList(ItemGroup itemGroup) {
         itemGroupList.add(itemGroup);
+    }
+
+    public void modifyItemGroupList(int specificPosition, ItemGroup itemGroup) {
+        itemGroupList.replace(specificPosition, itemGroup);
+    }
+
+    public void removeFromItemGroupList(int specificPosition) {
+        itemGroupList.remove(specificPosition);
     }
 
     public OrderArrayList<Order> getOrderList() {
