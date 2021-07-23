@@ -1,6 +1,5 @@
 package ClientClass;
 
-
 import DatabaseClass.Database;
 import EntityClass.*;
 import ImplementationClass.*;
@@ -440,7 +439,7 @@ public class GroupBuyClient {
                     + "> ", no);
             int position = scan.nextInt();
             if (position <= no && position > 0) {
-                return databaseItemGroupList.view(position);
+                return itemGroupListByKeyword.view(position);
             } else {
                 return null;
             }
