@@ -1,3 +1,5 @@
+package ClientClass;
+
 
 import java.io.Console;
 import java.text.SimpleDateFormat;

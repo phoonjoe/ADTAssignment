@@ -1,3 +1,5 @@
+package ClientClass;
+
 
 import DatabaseClass.Database;
 import EntityClass.*;
@@ -18,12 +20,12 @@ public class SystemMain {
     private static Staff loginStaff;
     private static Database database;
     private static Scanner scan;
-    private static GroupBuyMain groupBuyMain;
+    private static GroupBuyClient groupBuyMain;
 
     private static final String SHORT_LINE = "=========================";
 
     public static void main(String[] args) {
-        groupBuyMain = new GroupBuyMain();
+        groupBuyMain = new GroupBuyClient();
         scan = new Scanner(System.in);
         database = new Database();
 

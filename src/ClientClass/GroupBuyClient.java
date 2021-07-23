@@ -1,3 +1,5 @@
+package ClientClass;
+
 
 import DatabaseClass.Database;
 import EntityClass.*;
@@ -16,7 +18,7 @@ import java.util.Scanner;
  *
  * @author Joe Phoon
  */
-public class GroupBuyMain {
+public class GroupBuyClient {
 
     private Customer loginCustomer;
     private Staff loginStaff;
