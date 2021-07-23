@@ -24,11 +24,7 @@ public interface ItemGroupListInterface<T> {
 
     public T remove(int specificPosition);
 
-    public void clear();
-
     public boolean replace(int specificPosition, T newItemGroup);
-
-    public boolean check(T itemGroup);
 
     public int getCapacity();
 

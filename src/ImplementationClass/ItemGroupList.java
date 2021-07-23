@@ -29,14 +29,14 @@ public class ItemGroupList<T> implements ItemGroupListInterface<T> {
 
     @Override
     public T view() {
-        T lastItemGroup = null;
+        T firstItemGroup = null;
         if (isEmpty() == false) {
 
-            lastItemGroup = array[0];
+            firstItemGroup = array[0];
         } else {
             System.out.println("Error! This List is empty!");
         }
-        return lastItemGroup;
+        return firstItemGroup;
     }
 
     @Override
@@ -122,11 +122,6 @@ public class ItemGroupList<T> implements ItemGroupListInterface<T> {
     }
 
     @Override
-    public void clear() {
-        totalNumOfIndex = 0;
-    }
-
-    @Override
     public boolean replace(int specificPosition, T newItemGroup) {
 
         if ((specificPosition >= 1) && (specificPosition <= totalNumOfIndex)) {
@@ -138,17 +133,6 @@ public class ItemGroupList<T> implements ItemGroupListInterface<T> {
 
         return true;
 
-    }
-
-    @Override
-    public boolean check(T itemGroup) {
-
-        for (int index = 0; (index < totalNumOfIndex); index++) {
-            if (itemGroup.equals(array[index])) {
-                return true;
-            }
-        }
-        return false;
     }
 
     @Override

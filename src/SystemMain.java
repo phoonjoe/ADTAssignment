@@ -118,7 +118,7 @@ public class SystemMain {
             System.out.printf("\n%s\n", SHORT_LINE);
             System.out.printf("Select Menu:\n"
                     + "-------------------------\n"
-                    + "1. You Gay\n"
+                    + "1. Maintain Item Group\n"
                     + "2. Generate Sales Report By Date\n"
                     + "0. Logout\n"
                     + "> ");
