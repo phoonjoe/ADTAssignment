@@ -1,3 +1,4 @@
+package ClientClass;
 
 import DatabaseClass.Database;
 import EntityClass.*;
@@ -13,15 +14,14 @@ import java.util.Scanner;
  */
 public class MaintainItemGroup {
 
-    private Staff loginStaff;
     private Database database;
     private Scanner scan;
     private final String BORDER = "========================================================================================================================================================================================================";
     private final String SHORT_LINE = "=========================";
 
-    public void maintainItemGroup(Database paraDatabase, Staff paraLoginStaff) {
+    public void maintainItemGroup(Database paraDatabase) {
         scan = new Scanner(System.in);
-        this.loginStaff = paraLoginStaff;
+
         this.database = paraDatabase;
 
         boolean itemGroupOperation = false;

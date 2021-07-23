@@ -1,3 +1,4 @@
+package ClientClass;
 
 import DatabaseClass.Database;
 import EntityClass.*;
@@ -16,7 +17,7 @@ import java.util.Scanner;
  *
  * @author Joe Phoon
  */
-public class GroupBuyMain {
+public class GroupBuyClient {
 
     private Customer loginCustomer;
     private Staff loginStaff;
@@ -123,16 +124,17 @@ public class GroupBuyMain {
                     Order order = orderList.viewElement(position);
                     if (order.getStatus().equals("Completed") && order.getEndDate().compareTo(previousStartDate) >= 0 && order.getEndDate().compareTo(previousEndDate) <= 0) {
                         ItemGroup itemGroup = orderList.viewElement(position).getItemGroup();
-                        boolean foundInList = false;
-                        for (int itemGroupPosition = 1; itemGroupPosition <= itemGroupList.getTotalNumOfIndex(); itemGroupPosition++) {
-                            if (itemGroup.getId().equals(itemGroupList.view(itemGroupPosition).getId())) {
-                                previousTotal += order.getQuantity() * itemGroup.getPrice();
-                                foundInList = true;
-                            }
-                        }
-                        if (!foundInList) {
-                            previousTotal += order.getQuantity() * itemGroup.getPrice();
-                        }
+                        previousTotal += order.getQuantity() * itemGroup.getPrice();
+//                        boolean foundInList = false;
+//                        for (int itemGroupPosition = 1; itemGroupPosition <= itemGroupList.getTotalNumOfIndex(); itemGroupPosition++) {
+//                            if (itemGroup.getId().equals(itemGroupList.view(itemGroupPosition).getId())) {
+//                                previousTotal += order.getQuantity() * itemGroup.getPrice();
+//                                foundInList = true;
+//                            }
+//                        }
+//                        if (!foundInList) {
+//                            previousTotal += order.getQuantity() * itemGroup.getPrice();
+//                        }
                     }
                 }
 
@@ -146,16 +148,18 @@ public class GroupBuyMain {
                             if (itemGroup.getId().equals(itemGroupList.view(itemGroupPosition).getId())) {
                                 int currentQuantity = quantitySoldList.viewElement(itemGroupPosition);
                                 currentQuantity += order.getQuantity();
-                                total += order.getQuantity() * itemGroup.getPrice();
+//                                total += order.getQuantity() * itemGroup.getPrice();
                                 quantitySoldList.replace(currentQuantity, itemGroupPosition);
                                 foundInList = true;
+                                break;
                             }
                         }
                         if (!foundInList) {
                             itemGroupList.add(itemGroup);
                             quantitySoldList.add(order.getQuantity());
-                            total += order.getQuantity() * itemGroup.getPrice();
+//                            total += order.getQuantity() * itemGroup.getPrice();
                         }
+                        total += order.getQuantity() * itemGroup.getPrice();
                     }
                 }
 

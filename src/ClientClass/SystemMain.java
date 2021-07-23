@@ -1,3 +1,4 @@
+package ClientClass;
 
 import DatabaseClass.Database;
 import EntityClass.*;
@@ -18,12 +19,12 @@ public class SystemMain {
     private static Staff loginStaff;
     private static Database database;
     private static Scanner scan;
-    private static GroupBuyMain groupBuyMain;
+    private static GroupBuyClient groupBuyMain;
     private static MaintainItemGroup maintainItemGroup;
     private static final String SHORT_LINE = "=========================";
 
     public static void main(String[] args) {
-        groupBuyMain = new GroupBuyMain();
+        groupBuyMain = new GroupBuyClient();
         maintainItemGroup = new MaintainItemGroup();
         scan = new Scanner(System.in);
         database = new Database();
@@ -130,7 +131,7 @@ public class SystemMain {
                     loop = false;
                     break;
                 case 1:
-                    maintainItemGroup.maintainItemGroup(database, loginStaff);
+                    maintainItemGroup.maintainItemGroup(database);
                     break;
                 case 2:
 
