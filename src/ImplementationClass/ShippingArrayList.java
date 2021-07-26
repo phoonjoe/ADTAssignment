@@ -27,7 +27,6 @@ public class ShippingArrayList<T> implements ShippingListInterface<T> {
 
         if (isShippingListEmpty() == false) {
             result = shippingArray[0];
-            System.out.printf("Shipping found! Retrieving...\n");
         } else {
             System.out.printf("Shipping list is currently empty!\n");
         }
@@ -40,7 +39,6 @@ public class ShippingArrayList<T> implements ShippingListInterface<T> {
         if (isShippingListEmpty() == false) {
             if ((givenPosition >= 1) && (givenPosition <= numberOfShipping)) {
                 result = shippingArray[givenPosition - 1];
-                System.out.printf("Shipping found! Retrieving...\n");
             } else {
                 System.out.printf("Error! Shipping does not exist!\n");
             }
@@ -57,7 +55,6 @@ public class ShippingArrayList<T> implements ShippingListInterface<T> {
         }
         shippingArray[numberOfShipping] = newShipping;
         numberOfShipping++;
-        System.out.printf("New shipping added successfully!\n");
     }
 
     @Override
@@ -70,7 +67,6 @@ public class ShippingArrayList<T> implements ShippingListInterface<T> {
             makeRoom(newPosition);
             shippingArray[newPosition - 1] = newShipping;
             numberOfShipping++;
-            System.out.printf("New shipping added successfully!\n");
         } else {
             finishAdding = false;
             System.out.printf("Shipping failed to add!\n");
@@ -89,7 +85,6 @@ public class ShippingArrayList<T> implements ShippingListInterface<T> {
                     removeGap(givenPosition);
                 }
                 numberOfShipping--;
-                System.out.printf("Shipping deleted successfully!\n");
             } else {
                 System.out.printf("Error! Shipping does not exist!\n");
             }
