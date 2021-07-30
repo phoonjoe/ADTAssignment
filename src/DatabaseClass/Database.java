@@ -52,9 +52,9 @@ public class Database {
 
         // ============Shipping============
         shippingList = new ShippingArrayList<>();
-        shippingList.addNewShipping(new Shipping("Pos", 12, "1 Day"));
-        shippingList.addNewShipping(new Shipping("ABD", 10, "3 Days"));
-        shippingList.addNewShipping(new Shipping("Laju", 12, "5 Days"));
+        shippingList.addNewShipping(new Shipping("Pos Laju", 8, "1 Day"));
+        shippingList.addNewShipping(new Shipping("J&T Express", 10, "3 Days"));
+        shippingList.addNewShipping(new Shipping("DHL Express", 12, "5 Days"));
 
         // ============Order============
         orderList = new OrderArrayList<>();
