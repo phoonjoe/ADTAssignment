@@ -89,6 +89,6 @@ public class MaintainShipping {
     }
 
     private boolean viewShippingCompany(ShippingArrayList<Shipping> shippingList) {
-
+        return true;
     }
 }

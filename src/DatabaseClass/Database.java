@@ -67,6 +67,10 @@ public class Database {
         orderList.viewElement(1).addIntoOrderMembersList(customerList.getMember(3));
         orderList.viewElement(1).completeOrder(shippingList.readShipping(1));
 
+        //Add 2 more member join into OR003
+        orderList.viewElement(3).addIntoOrderMembersList(customerList.getMember(1));
+        orderList.viewElement(3).addIntoOrderMembersList(customerList.getMember(2));
+
         //Complete OR004 at 21 hour ago
         orderList.viewElement(4).addIntoOrderMembersList(customerList.getMember(1));
         orderList.viewElement(4).addIntoOrderMembersList(customerList.getMember(2));

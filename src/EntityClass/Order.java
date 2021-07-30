@@ -104,14 +104,6 @@ public class Order {
         return id;
     }
 
-    public CustomerArrayList<Customer> getOrderMembersList() {
-        return orderMembersList;
-    }
-
-    public void setOrderMembersList(CustomerArrayList<Customer> orderMembersList) {
-        this.orderMembersList = orderMembersList;
-    }
-
     public int getMaxSlot() {
         return maxSlot;
     }
@@ -140,11 +132,11 @@ public class Order {
         this.shipping = shipping;
     }
 
-    public CustomerArrayList<Customer> getOrderMembers() {
+    public CustomerArrayList<Customer> getOrderMembersList() {
         return orderMembersList;
     }
 
-    public void setOrderMembers(CustomerArrayList<Customer> orderMembersList) {
+    public void setOrderMembersList(CustomerArrayList<Customer> orderMembersList) {
         this.orderMembersList = orderMembersList;
     }
 

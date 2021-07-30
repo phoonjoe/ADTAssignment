@@ -76,6 +76,176 @@ public class GroupBuyClient {
         } while (!backToMenu);
     }
 
+    public void readOrderByDate(Database paraDatabase) {
+        scan = new Scanner(System.in);
+        this.database = paraDatabase;
+
+        OrderArrayList<Order> orderList = database.getOrderList();
+        OrderArrayList<Order> foundOrderList = new OrderArrayList<>(orderList.size());
+
+        boolean loop = true;
+
+        try {
+            int no = 0;
+            Date firstDate = new Date(1);
+            SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+
+            System.out.printf("\nEnter start date (dd/MM/yyyy): ");
+            String startDateInString = scan.nextLine();
+            System.out.printf("Enter end   date (dd/MM/yyyy): ");
+            String endDateInString = scan.nextLine();
+
+            Date startDate = format.parse(startDateInString);
+            Date endDate = format.parse(endDateInString);
+            endDate = new Date(endDate.getTime() + 86399999);
+
+            if (startDate.compareTo(firstDate) < 0 || endDate.compareTo(firstDate) < 0) {
+                System.out.printf("\n*******************************************\n");
+                System.out.printf("* The date need to start from: %s *\n", format.format(firstDate));
+                System.out.printf("*******************************************\n");
+            } else {
+                System.out.printf("\n[ DIRECTLY PRESS 'ENTER' TO SKIP ]\n");
+                System.out.printf("Customer ID: ");
+                String customerId = scan.nextLine();
+
+                System.out.printf("\n[ DIRECTLY PRESS 'ENTER' TO SKIP ]\n");
+                System.out.printf("Item ID: ");
+                String itemId = scan.nextLine();
+
+                String msg = String.format("\n\n%s\n", BORDER);
+                msg += String.format("\t\t\t\t\t\t\t\t\t\t  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+                msg += String.format("\t\t\t\t\t\t\t\t\t\t  #   ORDER(S)(%10s - %10s)   #\n", format.format(startDate), format.format(endDate));
+                msg += String.format("\t\t\t\t\t\t\t\t\t\t  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+                msg += String.format("%s\n", BORDER);
+                msg += String.format("%3s %15s %18s %49s %42s %18s %13s %23s %10s\n", "No.", "OrderID", "Product Name", "Collect Address", "Min Buyer", "Buyer Joined", "Total", "Time Left(hour)", "Status");
+                msg += String.format("%3s %15s %18s %72s %19s %18s %18s %18s %11s\n", "---", "-------", "------------", "----------------------------------------------------------", "---------", "------------", "---------------", "---------------", "--------");
+
+                for (int orderListPosition = 1; orderListPosition <= orderList.size(); orderListPosition++) {
+                    Order order = orderList.viewElement(orderListPosition);
+                    if (order.getEndDate().compareTo(startDate) >= 0 && order.getEndDate().compareTo(endDate) <= 0) {
+                        ItemGroup itemGroup = order.getItemGroup();
+                        Customer leader = order.getOrderMembersList().getMember();
+                        foundOrderList.add(order);
+                        if (!customerId.isEmpty() && itemId.isEmpty()) {
+                            for (int orderMemberPosition = 1; orderMemberPosition <= order.getOrderMembersList().getMemberAmount(); orderMemberPosition++) {
+                                Customer member = order.getOrderMembersList().getMember(orderMemberPosition);
+                                if (customerId.toUpperCase().equals(member.getId().toUpperCase())) {
+                                    msg += String.format("%d. %15s %18s %71s %16d %17d/%-3d %15s %17d %17s\n", ++no, order.getId(), itemGroup.getName(), leader.getAddress(), itemGroup.getMinimuimBuyer(), order.getOrderMembersList().getMemberAmount(), order.getMaxSlot(), order.getTotal(), order.calculateTimeLeft(), order.getStatus());
+                                }
+                            }
+                        } else if (customerId.isEmpty() && !itemId.isEmpty()) {
+                            if (itemId.toUpperCase().equals(order.getItemGroup().getId().toUpperCase())) {
+                                msg += String.format("%d. %15s %18s %71s %16d %17d/%-3d %15s %17d %17s\n", ++no, order.getId(), itemGroup.getName(), leader.getAddress(), itemGroup.getMinimuimBuyer(), order.getOrderMembersList().getMemberAmount(), order.getMaxSlot(), order.getTotal(), order.calculateTimeLeft(), order.getStatus());
+                            }
+                        } else if (!customerId.isEmpty() && !itemId.isEmpty()) {
+                            if (itemId.toUpperCase().equals(order.getItemGroup().getId().toUpperCase())) {
+                                for (int orderMemberPosition = 1; orderMemberPosition <= order.getOrderMembersList().getMemberAmount(); orderMemberPosition++) {
+                                    Customer member = order.getOrderMembersList().getMember(orderMemberPosition);
+                                    if (customerId.toUpperCase().equals(member.getId().toUpperCase())) {
+                                        msg += String.format("%d. %15s %18s %71s %16d %17d/%-3d %15s %17d %17s\n", ++no, order.getId(), itemGroup.getName(), leader.getAddress(), itemGroup.getMinimuimBuyer(), order.getOrderMembersList().getMemberAmount(), order.getMaxSlot(), order.getTotal(), order.calculateTimeLeft(), order.getStatus());
+                                    }
+                                }
+                            }
+                        } else {
+                            msg += String.format("%d. %15s %18s %71s %16d %17d/%-3d %15s %17d %17s\n", ++no, order.getId(), itemGroup.getName(), leader.getAddress(), itemGroup.getMinimuimBuyer(), order.getOrderMembersList().getMemberAmount(), order.getMaxSlot(), order.getTotal(), order.calculateTimeLeft(), order.getStatus());
+                        }
+                    }
+                }
+
+                if (no == 0) {
+                    boolean foundCustomer = false;
+                    boolean foundItem = false;
+
+                    //===========Check if userId exist=============
+                    if (!customerId.isEmpty()) {
+                        for (int orderListPosition = 1; orderListPosition <= orderList.size(); orderListPosition++) {
+                            CustomerArrayList<Customer> customerList = orderList.viewElement(orderListPosition).getOrderMembersList();
+                            for (int orderMemberPosition = 1; orderMemberPosition <= customerList.getMemberAmount(); orderMemberPosition++) {
+                                Customer customer = customerList.getMember(orderMemberPosition);
+                                if (customerId.toUpperCase().equals(customer.getId().toUpperCase())) {
+                                    foundCustomer = true;
+                                }
+                            }
+                        }
+                        if (!foundCustomer) {
+                            System.out.printf("\n*******************\n");
+                            System.out.printf("* Invalid User ID *\n");
+                            System.out.printf("*******************\n");
+                        }
+                    } else {
+                        foundCustomer = true;
+                    }
+
+                    //===========Check if itemId exist=============
+                    if (!itemId.isEmpty()) {
+                        for (int orderListPosition = 1; orderListPosition <= orderList.size(); orderListPosition++) {
+                            Order order = orderList.viewElement(orderListPosition);
+                            ItemGroup itemGroup = order.getItemGroup();
+                            if (itemId.toUpperCase().equals(itemGroup.getId().toUpperCase())) {
+                                foundItem = true;
+                            }
+
+                        }
+                        if (!foundItem) {
+                            System.out.printf("\n*******************\n");
+                            System.out.printf("* Invalid Item ID *\n");
+                            System.out.printf("*******************\n");
+                        }
+                    } else {
+                        foundItem = true;
+                    }
+
+                    if (foundCustomer && foundItem) {
+                        System.out.printf("\n**********************************************************\n");
+                        System.out.printf("* No sales order found during %s to %s *\n", format.format(startDate), format.format(endDate));
+                        System.out.printf("**********************************************************\n");
+                    }
+                } else {
+                    do {
+                        System.out.printf(msg);
+                        System.out.printf("\n%s\n", SHORT_LINE);
+                        System.out.printf("Enter a number:\n"
+                                + "-------------------------\n");
+                        if (no == 1) {
+                            System.out.printf("# 1      (Select one group for details view)\n");
+                        } else {
+                            System.out.printf("# 1->%-3d (Select one group for details view)\n", no);
+                        }
+                        System.out.printf("# Others (Back)\n> ");
+                        int position = scan.nextInt();
+                        scan.nextLine();
+                        if (position <= no && position > 0) {
+                            Order selectedOrder = foundOrderList.viewElement(position);
+                            displayDetailsOrder(selectedOrder);
+
+                            System.out.printf("\n%s\n", SHORT_LINE);
+                            System.out.printf("Enter a number:\n"
+                                    + "-------------------------\n");
+                            System.out.printf("# 1      (View Related User(s) Details)\n");
+                            System.out.printf("# Others (Back)\n> ");
+                            int reply = scan.nextInt();
+                            scan.nextLine();
+                            if (reply == 1) {
+                                displayJoinedBuyer(selectedOrder.getOrderMembersList());
+                                System.out.printf("Press ANY key back to continue...");
+                                scan.nextLine();
+                            }
+                        } else {
+                            loop = false;
+                        }
+                    } while (loop);
+                }
+            }
+
+        } catch (ParseException ex) {
+            System.out.printf("\n******************************************************\n");
+            System.out.printf("* %s is a invalid date format *\n", ex.getMessage());
+            System.out.printf("******************************************************\n");
+
+        }
+
+    }
+
     public void generateSalesReport(Database paraDatabase) {
         scan = new Scanner(System.in);
         this.database = paraDatabase;
@@ -203,10 +373,10 @@ public class GroupBuyClient {
         for (int position = 1; position <= databaseOrderList.size(); position++) {
             Order order = databaseOrderList.viewElement(position);
             ItemGroup itemGroup = order.getItemGroup();
-            Customer leader = order.getOrderMembers().getMember();
+            Customer leader = order.getOrderMembersList().getMember();
             if (leader.getId().equals(loginCustomer.getId())) {
                 createdOrderListByLoginAccount.add(order);
-                msg += String.format("%d. %15s %18s %71s %16d %17d/%-3d %15s %17d %17s\n", ++no, order.getId(), itemGroup.getName(), leader.getAddress(), itemGroup.getMinimuimBuyer(), order.getOrderMembers().getMemberAmount(), order.getMaxSlot(), itemGroup.getPrice() + ((order.getShipping() == null) ? 0 : order.getShipping().getFee()), order.calculateTimeLeft(), order.getStatus());
+                msg += String.format("%d. %15s %18s %71s %16d %17d/%-3d %15s %17d %17s\n", ++no, order.getId(), itemGroup.getName(), leader.getAddress(), itemGroup.getMinimuimBuyer(), order.getOrderMembersList().getMemberAmount(), order.getMaxSlot(), itemGroup.getPrice() + ((order.getShipping() == null) ? 0 : order.getShipping().getFee()), order.calculateTimeLeft(), order.getStatus());
             }
         }
         if (no == 0) {
@@ -245,6 +415,7 @@ public class GroupBuyClient {
                             selectedOrder.completeOrder(selectCourierService());
                             displayDetailsOrder(selectedOrder);
                             System.out.printf("Press ANY key back to continue...");
+                            scan.nextLine();
                             return false;
                         }
                     }
@@ -258,7 +429,7 @@ public class GroupBuyClient {
                     int reply = scan.nextInt();
                     scan.nextLine();
                     if (reply == 1) {
-                        displayJoinedBuyer(selectedOrder.getOrderMembers());
+                        displayJoinedBuyer(selectedOrder.getOrderMembersList());
                     }
                     System.out.printf("Press ANY key back to continue...");
                     scan.nextLine();
@@ -336,13 +507,13 @@ public class GroupBuyClient {
         msg += String.format("%3s %15s %18s %68s %20s %18s %19s %18s %13s\n", "---", "-------", "------------", "----------------------------------------------------------", "-------------", "---------------", "----------------", "----------------", "---------");
         for (int position = 1; position <= databaseOrderList.size(); position++) {
             Order order = databaseOrderList.viewElement(position);
-            CustomerArrayList<Customer> orderMembers = order.getOrderMembers();
+            CustomerArrayList<Customer> orderMembers = order.getOrderMembersList();
             ItemGroup itemGroup = order.getItemGroup();
-            Customer leader = order.getOrderMembers().getMember();
+            Customer leader = order.getOrderMembersList().getMember();
             for (int membersPosition = 2; membersPosition <= orderMembers.getMemberAmount(); membersPosition++) {
                 if (orderMembers.getMember(membersPosition).getId().equals(loginCustomer.getId())) {
                     joinedOrderListByLoginAccount.add(order);
-                    msg += String.format("%d. %15s %18s %68s %14d/%-3d %16.2f %24s %12s %19s\n", ++no, order.getId(), itemGroup.getName(), leader.getAddress(), order.getOrderMembers().getMemberAmount(), order.getMaxSlot(), itemGroup.getPrice() + ((order.getShipping() == null) ? 0 : order.getShipping().getFee()), order.getDateInFormat(order.getCreateDate()), order.calculateTimeLeft(), order.getStatus());
+                    msg += String.format("%d. %15s %18s %68s %14d/%-3d %16.2f %24s %12s %19s\n", ++no, order.getId(), itemGroup.getName(), leader.getAddress(), order.getOrderMembersList().getMemberAmount(), order.getMaxSlot(), itemGroup.getPrice() + ((order.getShipping() == null) ? 0 : order.getShipping().getFee()), order.getDateInFormat(order.getCreateDate()), order.calculateTimeLeft(), order.getStatus());
                 }
             }
         }
@@ -449,17 +620,17 @@ public class GroupBuyClient {
 
         for (int position = 1; position <= databaseOrderList.size(); position++) {
             Order order = databaseOrderList.viewElement(position);
-            if (order.getItemGroup().getId().equals(itemGroup.getId()) && !order.getStatus().contains("Completed") && order.getOrderMembers().getMemberAmount() < order.getMaxSlot()) {
+            if (order.getItemGroup().getId().equals(itemGroup.getId()) && !order.getStatus().contains("Completed") && order.getOrderMembersList().getMemberAmount() < order.getMaxSlot()) {
                 boolean foundMembers = false;
-                for (int membersPosition = 1; membersPosition <= order.getOrderMembers().getMemberAmount(); membersPosition++) {
-                    if (order.getOrderMembers().getMember(membersPosition).getId().equals(loginCustomer.getId())) {
+                for (int membersPosition = 1; membersPosition <= order.getOrderMembersList().getMemberAmount(); membersPosition++) {
+                    if (order.getOrderMembersList().getMember(membersPosition).getId().equals(loginCustomer.getId())) {
                         foundMembers = true;
                     }
                 }
                 if (!foundMembers) {
                     orderListByItemGroupId.add(order);
-                    Customer leader = order.getOrderMembers().getMember();
-                    msg += String.format("%d. %18s %70s %17d %18d/%-3d\n", ++no, leader.getName(), leader.getAddress(), order.calculateTimeLeft(), order.getOrderMembers().getMemberAmount(), order.getMaxSlot());
+                    Customer leader = order.getOrderMembersList().getMember();
+                    msg += String.format("%d. %18s %70s %17d %18d/%-3d\n", ++no, leader.getName(), leader.getAddress(), order.calculateTimeLeft(), order.getOrderMembersList().getMemberAmount(), order.getMaxSlot());
                 }
             }
         }
@@ -528,7 +699,7 @@ public class GroupBuyClient {
     }
 
     public void displayDetailsOrder(Order order) {
-        Customer leader = order.getOrderMembers().getMember();
+        Customer leader = order.getOrderMembersList().getMember();
         ItemGroup itemGroup = order.getItemGroup();
         System.out.printf("%s\n", BORDER);
         System.out.printf("\t\t\t\t\t\t\t\t\t       Group Buying Details                                     Order No\t: %s\n", order.getId());
@@ -546,7 +717,7 @@ public class GroupBuyClient {
 
         detailMsg += String.format("Product Name\t\t: %-95s \t\tCreate Date\t: %s\n"
                 + "Minimum Buyer Needed\t: %d\n"
-                + "Buyer Joined\t\t: %d/%-3d\n", itemGroup.getName(), order.getDateInFormat(order.getCreateDate()), itemGroup.getMinimuimBuyer(), order.getOrderMembers().getMemberAmount(), order.getMaxSlot());
+                + "Buyer Joined\t\t: %d/%-3d\n", itemGroup.getName(), order.getDateInFormat(order.getCreateDate()), itemGroup.getMinimuimBuyer(), order.getOrderMembersList().getMemberAmount(), order.getMaxSlot());
 
         detailMsg += (String.format("%s\n"
                 + "SubTotal\t\t: RM%.2f (%.2f*%d)\n", "--------------------------------------------------", itemGroup.getPrice() * order.getQuantity(), itemGroup.getPrice(), order.getQuantity()));

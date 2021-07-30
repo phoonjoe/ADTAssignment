@@ -121,6 +121,7 @@ public class SystemMain {
                     + "-------------------------\n"
                     + "1. Maintain Item Group\n"
                     + "2. Generate Sales Report By Date\n"
+                    + "3. View orders history\n"
                     + "0. Logout\n"
                     + "> ");
             int menu = scan.nextInt();
@@ -136,6 +137,9 @@ public class SystemMain {
                 case 2:
 
                     groupBuyMain.generateSalesReport(database);
+                    break;
+                case 3:
+                    groupBuyMain.readOrderByDate(database);
                     break;
 
             }
