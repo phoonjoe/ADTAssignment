@@ -125,16 +125,6 @@ public class GroupBuyClient {
                     if (order.getStatus().equals("Completed") && order.getEndDate().compareTo(previousStartDate) >= 0 && order.getEndDate().compareTo(previousEndDate) <= 0) {
                         ItemGroup itemGroup = orderList.viewElement(position).getItemGroup();
                         previousTotal += order.getQuantity() * itemGroup.getPrice();
-//                        boolean foundInList = false;
-//                        for (int itemGroupPosition = 1; itemGroupPosition <= itemGroupList.getTotalNumOfIndex(); itemGroupPosition++) {
-//                            if (itemGroup.getId().equals(itemGroupList.view(itemGroupPosition).getId())) {
-//                                previousTotal += order.getQuantity() * itemGroup.getPrice();
-//                                foundInList = true;
-//                            }
-//                        }
-//                        if (!foundInList) {
-//                            previousTotal += order.getQuantity() * itemGroup.getPrice();
-//                        }
                     }
                 }
 
@@ -148,7 +138,6 @@ public class GroupBuyClient {
                             if (itemGroup.getId().equals(itemGroupList.view(itemGroupPosition).getId())) {
                                 int currentQuantity = quantitySoldList.viewElement(itemGroupPosition);
                                 currentQuantity += order.getQuantity();
-//                                total += order.getQuantity() * itemGroup.getPrice();
                                 quantitySoldList.replace(currentQuantity, itemGroupPosition);
                                 foundInList = true;
                                 break;
@@ -157,7 +146,6 @@ public class GroupBuyClient {
                         if (!foundInList) {
                             itemGroupList.add(itemGroup);
                             quantitySoldList.add(order.getQuantity());
-//                            total += order.getQuantity() * itemGroup.getPrice();
                         }
                         total += order.getQuantity() * itemGroup.getPrice();
                     }
@@ -218,7 +206,7 @@ public class GroupBuyClient {
             Customer leader = order.getOrderMembers().getMember();
             if (leader.getId().equals(loginCustomer.getId())) {
                 createdOrderListByLoginAccount.add(order);
-                msg += String.format("%d. %15s %18s %71s %16d %15d/100 %17s %17d %17s\n", ++no, order.getId(), itemGroup.getName(), leader.getAddress(), itemGroup.getMinimuimBuyer(), order.getOrderMembers().getMemberAmount(), itemGroup.getPrice() + ((order.getShipping() == null) ? 0 : order.getShipping().getFee()), order.calculateTimeLeft(), order.getStatus());
+                msg += String.format("%d. %15s %18s %71s %16d %17d/%-3d %15s %17d %17s\n", ++no, order.getId(), itemGroup.getName(), leader.getAddress(), itemGroup.getMinimuimBuyer(), order.getOrderMembers().getMemberAmount(), order.getMaxSlot(), itemGroup.getPrice() + ((order.getShipping() == null) ? 0 : order.getShipping().getFee()), order.calculateTimeLeft(), order.getStatus());
             }
         }
         if (no == 0) {
@@ -354,7 +342,7 @@ public class GroupBuyClient {
             for (int membersPosition = 2; membersPosition <= orderMembers.getMemberAmount(); membersPosition++) {
                 if (orderMembers.getMember(membersPosition).getId().equals(loginCustomer.getId())) {
                     joinedOrderListByLoginAccount.add(order);
-                    msg += String.format("%d. %15s %18s %68s %14d/100 %16.2f %24s %12s %19s\n", ++no, order.getId(), itemGroup.getName(), leader.getAddress(), order.getOrderMembers().getMemberAmount(), itemGroup.getPrice() + ((order.getShipping() == null) ? 0 : order.getShipping().getFee()), order.getDateInFormat(order.getCreateDate()), order.calculateTimeLeft(), order.getStatus());
+                    msg += String.format("%d. %15s %18s %68s %14d/%-3d %16.2f %24s %12s %19s\n", ++no, order.getId(), itemGroup.getName(), leader.getAddress(), order.getOrderMembers().getMemberAmount(), order.getMaxSlot(), itemGroup.getPrice() + ((order.getShipping() == null) ? 0 : order.getShipping().getFee()), order.getDateInFormat(order.getCreateDate()), order.calculateTimeLeft(), order.getStatus());
                 }
             }
         }
@@ -461,7 +449,7 @@ public class GroupBuyClient {
 
         for (int position = 1; position <= databaseOrderList.size(); position++) {
             Order order = databaseOrderList.viewElement(position);
-            if (order.getItemGroup().getId().equals(itemGroup.getId()) && !order.getStatus().contains("Completed") && order.getOrderMembers().getMemberAmount() < 100) {
+            if (order.getItemGroup().getId().equals(itemGroup.getId()) && !order.getStatus().contains("Completed") && order.getOrderMembers().getMemberAmount() < order.getMaxSlot()) {
                 boolean foundMembers = false;
                 for (int membersPosition = 1; membersPosition <= order.getOrderMembers().getMemberAmount(); membersPosition++) {
                     if (order.getOrderMembers().getMember(membersPosition).getId().equals(loginCustomer.getId())) {
@@ -471,7 +459,7 @@ public class GroupBuyClient {
                 if (!foundMembers) {
                     orderListByItemGroupId.add(order);
                     Customer leader = order.getOrderMembers().getMember();
-                    msg += String.format("%d. %18s %70s %17d %18d/100\n", ++no, leader.getName(), leader.getAddress(), order.calculateTimeLeft(), order.getOrderMembers().getMemberAmount());
+                    msg += String.format("%d. %18s %70s %17d %18d/%-3d\n", ++no, leader.getName(), leader.getAddress(), order.calculateTimeLeft(), order.getOrderMembers().getMemberAmount(), order.getMaxSlot());
                 }
             }
         }
@@ -508,19 +496,31 @@ public class GroupBuyClient {
             if (scan.nextLine().toUpperCase().charAt(0) == 'Y') {
                 database.updateOrderByAddNewMember(orderListByItemGroupId.viewElement(position).getId(), loginCustomer);
                 displayDetailsOrder(orderListByItemGroupId.viewElement(position));
-
                 System.out.printf("Press ANY key to continue...");
                 scan.nextLine();
             }
         } else if (position == -1) {
+
             System.out.printf("\nAre you sure you want to create new group?(Y/N)");
             if (scan.nextLine().toUpperCase().charAt(0) == 'Y') {
-                Order newOrder = new Order(itemGroup, loginCustomer);
-                database.addIntoOrderList(newOrder);
-                displayDetailsOrder(newOrder);
+                int maxSlot;
+                do {
+                    System.out.printf("\nEnter maximum buyers for your group (Min:%d): ", itemGroup.getMinimuimBuyer());
+                    maxSlot = scan.nextInt();
+                    scan.nextLine();
+                    if (maxSlot >= itemGroup.getMinimuimBuyer()) {
+                        Order newOrder = new Order(itemGroup, loginCustomer, maxSlot);
+                        database.addIntoOrderList(newOrder);
+                        displayDetailsOrder(newOrder);
+                        System.out.printf("Press ANY key to continue...");
+                        scan.nextLine();
+                    } else {
+                        System.out.printf("******************************************************************\n");
+                        System.out.printf("* Invalid slot number! Please enter number that are %d or above! *\n", itemGroup.getMinimuimBuyer());
+                        System.out.printf("******************************************************************\n");
+                    }
+                } while (maxSlot < itemGroup.getMinimuimBuyer());
 
-                System.out.printf("Press ANY key to continue...");
-                scan.nextLine();
             }
         }
 
@@ -546,7 +546,7 @@ public class GroupBuyClient {
 
         detailMsg += String.format("Product Name\t\t: %-95s \t\tCreate Date\t: %s\n"
                 + "Minimum Buyer Needed\t: %d\n"
-                + "Buyer Joined\t\t: %d/100\n", itemGroup.getName(), order.getDateInFormat(order.getCreateDate()), itemGroup.getMinimuimBuyer(), order.getOrderMembers().getMemberAmount());
+                + "Buyer Joined\t\t: %d/%-3d\n", itemGroup.getName(), order.getDateInFormat(order.getCreateDate()), itemGroup.getMinimuimBuyer(), order.getOrderMembers().getMemberAmount(), order.getMaxSlot());
 
         detailMsg += (String.format("%s\n"
                 + "SubTotal\t\t: RM%.2f (%.2f*%d)\n", "--------------------------------------------------", itemGroup.getPrice() * order.getQuantity(), itemGroup.getPrice(), order.getQuantity()));

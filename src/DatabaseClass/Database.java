@@ -58,10 +58,10 @@ public class Database {
 
         // ============Order============
         orderList = new OrderArrayList<>();
-        orderList.add(new Order(itemGroupList.view(2), customerList.getMember(1), new Date(currentDate.getTime() - MILLIS_IN_A_HOUR)));         //OR001
-        orderList.add(new Order(itemGroupList.view(1), customerList.getMember(2), new Date(currentDate.getTime() - MILLIS_IN_A_HOUR * 10)));    //OR002
-        orderList.add(new Order(itemGroupList.view(2), customerList.getMember(3), new Date(currentDate.getTime() - MILLIS_IN_A_HOUR * 23)));    //OR003
-        orderList.add(new Order(itemGroupList.view(2), customerList.getMember(3), new Date(currentDate.getTime() - MILLIS_IN_A_HOUR * 24)));    //OR004
+        orderList.add(new Order(itemGroupList.view(2), customerList.getMember(1), new Date(currentDate.getTime() - MILLIS_IN_A_HOUR), 4));         //OR001
+        orderList.add(new Order(itemGroupList.view(1), customerList.getMember(2), new Date(currentDate.getTime() - MILLIS_IN_A_HOUR * 10), 3));    //OR002
+        orderList.add(new Order(itemGroupList.view(2), customerList.getMember(3), new Date(currentDate.getTime() - MILLIS_IN_A_HOUR * 23), 5));    //OR003
+        orderList.add(new Order(itemGroupList.view(2), customerList.getMember(3), new Date(currentDate.getTime() - MILLIS_IN_A_HOUR * 24), 5));    //OR004
 
         //Complete OR001 at current time
         orderList.viewElement(1).addIntoOrderMembersList(customerList.getMember(3));

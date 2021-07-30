@@ -27,6 +27,7 @@ public class Order {
     private Date createDate;
     private Date endDate;
     private int quantity;
+    private int maxSlot;
     private double total;
     private String status;    //Waiting, active, completed
 
@@ -34,10 +35,11 @@ public class Order {
         this.id = String.format("OR%03d", ++count);
     }
 
-    public Order(ItemGroup itemGroup, Customer leader) {
+    public Order(ItemGroup itemGroup, Customer leader, int maxSlot) {
         this.id = String.format("OR%03d", ++count);
         this.itemGroup = itemGroup;
-        this.orderMembersList = new CustomerArrayList<>(100);
+        this.maxSlot = maxSlot;
+        this.orderMembersList = new CustomerArrayList<>(maxSlot);
         this.orderMembersList.addMember(leader);
         this.createDate = new Date();
         this.endDate = new Date(createDate.getTime() + MILLIS_IN_A_DAY);
@@ -47,10 +49,11 @@ public class Order {
     }
 
     //===========Specific for hard code data purpose only=================
-    public Order(ItemGroup itemGroup, Customer leader, Date createDate) {
+    public Order(ItemGroup itemGroup, Customer leader, Date createDate, int maxSlot) {
         this.id = String.format("OR%03d", ++count);
         this.itemGroup = itemGroup;
-        this.orderMembersList = new CustomerArrayList<>(100);
+        this.maxSlot = maxSlot;
+        this.orderMembersList = new CustomerArrayList<>(maxSlot);
         this.orderMembersList.addMember(leader);
         this.createDate = createDate;
         this.endDate = new Date(createDate.getTime() + MILLIS_IN_A_DAY);
@@ -99,6 +102,22 @@ public class Order {
 
     public String getId() {
         return id;
+    }
+
+    public CustomerArrayList<Customer> getOrderMembersList() {
+        return orderMembersList;
+    }
+
+    public void setOrderMembersList(CustomerArrayList<Customer> orderMembersList) {
+        this.orderMembersList = orderMembersList;
+    }
+
+    public int getMaxSlot() {
+        return maxSlot;
+    }
+
+    public void setMaxSlot(int maxSlot) {
+        this.maxSlot = maxSlot;
     }
 
     public void setId(String id) {
