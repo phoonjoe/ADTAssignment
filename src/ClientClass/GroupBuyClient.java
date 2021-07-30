@@ -672,7 +672,7 @@ public class GroupBuyClient {
             }
         } else if (position == -1) {
 
-            System.out.printf("\nAre you sure you want to create new group?(Y/N)");
+            System.out.printf("\nAre you sure you want to create new group buy for '%s'?(Y/N)", itemGroup.getName());
             if (scan.nextLine().toUpperCase().charAt(0) == 'Y') {
                 int maxSlot;
                 do {
