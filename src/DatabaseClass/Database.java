@@ -30,7 +30,7 @@ public class Database {
 
         // ============Item Group============
         itemGroupList = new ItemGroupList<>();
-        itemGroupList.add(new ItemGroup("Nice Test", 30.00, 2));
+        itemGroupList.add(new ItemGroup("Nice Test LOL", 30.00, 2));
         itemGroupList.add(new ItemGroup("Tarkov GG", 24.00, 3));
         itemGroupList.add(new ItemGroup("POE Lets Go", 534.00, 2));
         itemGroupList.add(new ItemGroup("MEME", 30.00, 2));
@@ -40,9 +40,9 @@ public class Database {
 
         // ============Customer============
         customerList = new CustomerArrayList<>();
-        customerList.addMember(new Customer("Joe", 'F', "123 Jalan Mewa 3C,Prima Beruntung, 48300 Rawang Selangor", "joe123", "123", "012-3455678"));
+        customerList.addMember(new Customer("Gan Hao Xian", 'F', "123 Jalan Mewa 3C,Prima Beruntung, 48300 Rawang Selangor", "joe123", "123", "012-3455678"));
         customerList.addMember(new Customer("Billy Tan", 'F', "435 Jalan Anggerik,Prima Beruntung, 57400 Sun Earth", "tan123", "123", "012-3455678"));
-        customerList.addMember(new Customer("Haha", 'M', "76 Jalan Mewa 3C,Prima Beruntung, 48300 Rawang Selangor", "haha123", "123", "012-3455678"));
+        customerList.addMember(new Customer("Haha Hoho", 'M', "76 Jalan Mewa 3C,Prima Beruntung, 48300 Rawang Selangor", "haha123", "123", "012-3455678"));
 
         // ============Staff============
         staffList = new StaffArrayList<>();
