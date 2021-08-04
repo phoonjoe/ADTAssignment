@@ -9,17 +9,13 @@ package InterfaceClass;
  *
  * @author Joe Phoon
  */
-public interface OrderListInterface<T> {
+public interface JoeListInterface<T> {
 
     public boolean add(T object);
 
     public boolean add(T object, int position);
 
-    public int getCapacity();
-
     public boolean isEmpty();
-
-    public boolean isFull();
 
     public void removeAll();
 
@@ -27,7 +23,7 @@ public interface OrderListInterface<T> {
 
     public T removeElement(int position);
 
-    public void replace(T object, int position);
+    public boolean replace(T object, int position);
 
     public int size();
 

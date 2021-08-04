@@ -80,8 +80,8 @@ public class GroupBuyClient {
         scan = new Scanner(System.in);
         this.database = paraDatabase;
 
-        OrderArrayList<Order> orderList = database.getOrderList();
-        OrderArrayList<Order> foundOrderList = new OrderArrayList<>(orderList.size());
+        JoeLinkedList<Order> orderList = database.getOrderList();
+        JoeLinkedList<Order> foundOrderList = new JoeLinkedList<>();
 
         boolean loop = true;
 
@@ -250,9 +250,9 @@ public class GroupBuyClient {
         scan = new Scanner(System.in);
         this.database = paraDatabase;
 
-        OrderArrayList<Order> orderList = database.getOrderList();
+        JoeLinkedList<Order> orderList = database.getOrderList();
         ItemGroupList<ItemGroup> itemGroupList = new ItemGroupList<>(database.getItemGroupList().getTotalNumOfIndex());
-        OrderArrayList<Integer> quantitySoldList = new OrderArrayList<>(database.getItemGroupList().getTotalNumOfIndex());
+        JoeLinkedList<Integer> quantitySoldList = new JoeLinkedList<>();
 
         try {
             int no = 0;
@@ -360,8 +360,8 @@ public class GroupBuyClient {
 
     private boolean displayCreatedGroups() {
         int no = 0;
-        OrderArrayList<Order> databaseOrderList = database.getOrderList();
-        OrderArrayList<Order> createdOrderListByLoginAccount = new OrderArrayList<>(databaseOrderList.size());
+        JoeLinkedList<Order> databaseOrderList = database.getOrderList();
+        JoeLinkedList<Order> createdOrderListByLoginAccount = new JoeLinkedList<>();
         String msg = String.format("%s\n", BORDER);
         msg += String.format("\t\t\t\t\t\t\t\t\t\t   ~~~~~~~~~~~~~~~~~~~~~~\n");
         msg += String.format("\t\t\t\t\t\t\t\t\t\t   #   CREATED GROUPS   #\n");
@@ -430,9 +430,10 @@ public class GroupBuyClient {
                     scan.nextLine();
                     if (reply == 1) {
                         displayJoinedBuyer(selectedOrder.getOrderMembersList());
+                        System.out.printf("Press ANY key back to continue...");
+                        scan.nextLine();
                     }
-                    System.out.printf("Press ANY key back to continue...");
-                    scan.nextLine();
+
                 }
 
             }
@@ -496,8 +497,8 @@ public class GroupBuyClient {
 
     private boolean displayJoinedGroups() {
         int no = 0;
-        OrderArrayList<Order> databaseOrderList = database.getOrderList();
-        OrderArrayList<Order> joinedOrderListByLoginAccount = new OrderArrayList<>(databaseOrderList.size());
+        JoeLinkedList<Order> databaseOrderList = database.getOrderList();
+        JoeLinkedList<Order> joinedOrderListByLoginAccount = new JoeLinkedList<>();
         String msg = String.format("%s\n", BORDER);
         msg += String.format("\t\t\t\t\t\t\t\t\t\t   ~~~~~~~~~~~~~~~~~~~~~\n");
         msg += String.format("\t\t\t\t\t\t\t\t\t\t   #   JOINED GROUPS   #\n");
@@ -608,8 +609,8 @@ public class GroupBuyClient {
 
     private boolean selectOrders(ItemGroup itemGroup) {
         int no = 0;
-        OrderArrayList<Order> databaseOrderList = database.getOrderList();
-        OrderArrayList<Order> orderListByItemGroupId = new OrderArrayList<>(databaseOrderList.size());
+        JoeLinkedList<Order> databaseOrderList = database.getOrderList();
+        JoeLinkedList<Order> orderListByItemGroupId = new JoeLinkedList<>();
         String msg = String.format("%s\n", BORDER);
         msg += String.format("\t\t\t\t\t\t\t\t\t\t   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
         msg += String.format("\t\t\t\t\t\t\t\t\t\t   #   ITEM: %-15s   #\n", "Tarkov POE Foever".toUpperCase());
@@ -723,9 +724,9 @@ public class GroupBuyClient {
                 + "SubTotal\t\t: RM%.2f (%.2f*%d)\n", "--------------------------------------------------", itemGroup.getPrice() * order.getQuantity(), itemGroup.getPrice(), order.getQuantity()));
 
         if (order.getShipping() != null) {
-            detailMsg += (String.format("Shipping Fee\t\t: RM%.2f\n"
+            detailMsg += (String.format("Shipping Fee\t\t: RM%.2f (%s)\n"
                     + "Total\t\t\t: RM%.2f\n"
-                    + "Total/Buyer\t\t: RM%.2f\n", order.getShipping().calculateFee(order.getQuantity()), order.getTotal(), itemGroup.getPrice() + order.getShipping().getFee()));
+                    + "Total/Buyer\t\t: RM%.2f\n", order.getShipping().calculateFee(order.getQuantity()), order.getShipping().getName(), order.getTotal(), itemGroup.getPrice() + order.getShipping().getFee()));
         }
 
         System.out.print(detailMsg);

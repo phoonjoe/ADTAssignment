@@ -551,7 +551,7 @@ public class MaintainItemGroup {
 
     public void itemGroupSalesReport(Database database) {
 
-        OrderArrayList<Order> orderList = database.getOrderList();
+        JoeLinkedList<Order> orderList = database.getOrderList();
         ItemGroupList<ItemGroup> itemGroupList = database.getItemGroupList();
 
         try {

@@ -22,7 +22,7 @@ public class Database {
     private ItemGroupList<ItemGroup> itemGroupList;
     private CustomerArrayList<Customer> customerList;
     private ShippingArrayList<Shipping> shippingList;
-    private OrderArrayList<Order> orderList;
+    private JoeLinkedList<Order> orderList;
     private StaffArrayList<Staff> staffList;
 
     public Database() {
@@ -57,7 +57,7 @@ public class Database {
         shippingList.addNewShipping(new Shipping("DHL Express", 12, "5 Days"));
 
         // ============Order============
-        orderList = new OrderArrayList<>();
+        orderList = new JoeLinkedList<>();
         orderList.add(new Order(itemGroupList.view(2), customerList.getMember(1), new Date(currentDate.getTime() - MILLIS_IN_A_HOUR), 4));         //OR001
         orderList.add(new Order(itemGroupList.view(1), customerList.getMember(2), new Date(currentDate.getTime() - MILLIS_IN_A_HOUR * 10), 3));    //OR002
         orderList.add(new Order(itemGroupList.view(2), customerList.getMember(3), new Date(currentDate.getTime() - MILLIS_IN_A_HOUR * 23), 5));    //OR003
@@ -95,7 +95,7 @@ public class Database {
         itemGroupList.remove(specificPosition);
     }
 
-    public OrderArrayList<Order> getOrderList() {
+    public JoeLinkedList<Order> getOrderList() {
         return orderList;
     }
 
