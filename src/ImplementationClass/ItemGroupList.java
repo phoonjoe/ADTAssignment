@@ -90,8 +90,8 @@ public class ItemGroupList<T> implements ItemGroupListInterface<T> {
         T itemGroup = null;
         if (isEmpty() == false) {
 
-            itemGroup = array[totalNumOfIndex - 1];
-
+            itemGroup = array[0];
+            removeGap(1);
             totalNumOfIndex--;
         } else {
             System.out.println("Error! This List is empty!");

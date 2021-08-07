@@ -38,8 +38,9 @@ public class GroupBuyClient {
             switch (menu) {
                 case 1:
                     do {
-                        System.out.printf("\n%s\n", SHORT_LINE);
-                        System.out.print("Search item group name: ");
+                        System.out.printf("\n%s%s\n", SHORT_LINE, SHORT_LINE);
+                        System.out.printf("[ DIRECTLY PRESS 'ENTER' TO DISPLAY ALL ITEMS ]\n");
+                        System.out.print("Search product name: ");
                         String keyword = scan.nextLine();
 
                         ItemGroup itemGroup = selectFoundItemGroups(keyword);
@@ -281,7 +282,7 @@ public class GroupBuyClient {
                 System.out.printf("*******************************************\n");
             } else {
 
-                String msg = String.format("%s\n", BORDER);
+                String msg = String.format("\n\n%s\n", BORDER);
                 msg += String.format("\t\t\t\t\t\t\t\t\t\t  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
                 msg += String.format("\t\t\t\t\t\t\t\t\t\t  #   SALES REPORT(%10s - %10s)   #\n", format.format(startDate), format.format(endDate));
                 msg += String.format("\t\t\t\t\t\t\t\t\t\t  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
@@ -320,10 +321,11 @@ public class GroupBuyClient {
                         total += order.getQuantity() * itemGroup.getPrice();
                     }
                 }
-
-                for (int position = 1; position <= itemGroupList.getTotalNumOfIndex(); position++) {
-                    ItemGroup itemGroup = itemGroupList.view(position);
-                    msg += String.format("%d. %20s %28s %35d %45.2f %41.2f\n", ++no, itemGroup.getId(), itemGroup.getName(), quantitySoldList.viewElement(position), itemGroup.getPrice(), itemGroup.getPrice() * quantitySoldList.viewElement(position));
+                int totalElement = itemGroupList.getTotalNumOfIndex();
+                for (int position = 1; position <= totalElement; position++) {
+                    ItemGroup itemGroup = itemGroupList.remove();
+                    Integer quantitySold = quantitySoldList.removeElement();
+                    msg += String.format("%d. %20s %28s %35d %45.2f %41.2f\n", ++no, itemGroup.getId(), itemGroup.getName(), quantitySold, itemGroup.getPrice(), itemGroup.getPrice() * quantitySold);
                 }
 
                 if (no == 0) {
@@ -362,7 +364,7 @@ public class GroupBuyClient {
         int no = 0;
         JoeLinkedList<Order> databaseOrderList = database.getOrderList();
         JoeLinkedList<Order> createdOrderListByLoginAccount = new JoeLinkedList<>();
-        String msg = String.format("%s\n", BORDER);
+        String msg = String.format("\n\n%s\n", BORDER);
         msg += String.format("\t\t\t\t\t\t\t\t\t\t   ~~~~~~~~~~~~~~~~~~~~~~\n");
         msg += String.format("\t\t\t\t\t\t\t\t\t\t   #   CREATED GROUPS   #\n");
         msg += String.format("\t\t\t\t\t\t\t\t\t\t   ~~~~~~~~~~~~~~~~~~~~~~\n");
@@ -400,41 +402,51 @@ public class GroupBuyClient {
             scan.nextLine();
             if (position <= no && position > 0) {
                 Order selectedOrder = createdOrderListByLoginAccount.viewElement(position);
-                displayDetailsOrder(selectedOrder);
-                if (selectedOrder.getStatus().contains("Active")) {
-                    System.out.printf("\n%s\n", SHORT_LINE);
-                    System.out.printf("Enter a number:\n"
-                            + "-------------------------\n");
-                    System.out.printf("# 1      (Complete order)\n");
-                    System.out.printf("# Others (Back)\n> ");
-                    int complete = scan.nextInt();
-                    scan.nextLine();
-                    if (complete == 1) {
-                        System.out.printf("\nAre you sure you want to complete this order?(Y/N) ");
-                        if (scan.nextLine().toUpperCase().charAt(0) == 'Y') {
-                            selectedOrder.completeOrder(selectCourierService());
-                            displayDetailsOrder(selectedOrder);
+                boolean loop;
+                do {
+                    loop = false;
+                    displayDetailsOrder(selectedOrder);
+                    if (selectedOrder.getStatus().contains("Active")) {
+                        System.out.printf("\n%s\n", SHORT_LINE);
+                        System.out.printf("Enter a number:\n"
+                                + "-------------------------\n");
+                        System.out.printf("# 1      (Complete order)\n");
+                        System.out.printf("# 2      (View Joined Buyer(s) Details)\n");
+                        System.out.printf("# Others (Back)\n> ");
+                        int reply = scan.nextInt();
+                        scan.nextLine();
+                        if (reply == 1) {
+                            System.out.printf("\nAre you sure you want to complete this order?(Y/N) ");
+                            if (scan.nextLine().toUpperCase().charAt(0) == 'Y') {
+                                selectedOrder.completeOrder(selectCourierService());
+                                displayDetailsOrder(selectedOrder);
+                                System.out.printf("Press ANY key back to continue...");
+                                scan.nextLine();
+                                return false;
+                            }
+                        } else if (reply == 2) {
+                            displayJoinedBuyer(selectedOrder.getOrderMembersList());
                             System.out.printf("Press ANY key back to continue...");
                             scan.nextLine();
-                            return false;
+                            loop = true;
+                        }
+
+                    } else {
+                        System.out.printf("\n%s\n", SHORT_LINE);
+                        System.out.printf("Enter a number:\n"
+                                + "-------------------------\n");
+                        System.out.printf("# 1      (View Joined Buyer(s) Details)\n");
+                        System.out.printf("# Others (Back)\n> ");
+                        int reply = scan.nextInt();
+                        scan.nextLine();
+                        if (reply == 1) {
+                            displayJoinedBuyer(selectedOrder.getOrderMembersList());
+                            System.out.printf("Press ANY key back to continue...");
+                            scan.nextLine();
+                            loop = true;
                         }
                     }
-
-                } else {
-                    System.out.printf("\n%s\n", SHORT_LINE);
-                    System.out.printf("Enter a number:\n"
-                            + "-------------------------\n");
-                    System.out.printf("# 1      (View Joined Buyer(s) Details)\n");
-                    System.out.printf("# Others (Back)\n> ");
-                    int reply = scan.nextInt();
-                    scan.nextLine();
-                    if (reply == 1) {
-                        displayJoinedBuyer(selectedOrder.getOrderMembersList());
-                        System.out.printf("Press ANY key back to continue...");
-                        scan.nextLine();
-                    }
-
-                }
+                } while (loop);
 
             }
         }
@@ -442,18 +454,18 @@ public class GroupBuyClient {
     }
 
     private void displayJoinedBuyer(CustomerArrayList<Customer> orderMembersList) {
-        String msg = String.format("%s\n", BORDER);
+        String msg = String.format("\n\n%s\n", BORDER);
         msg += String.format("\t\t\t\t\t\t\t\t\t\t   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
         msg += String.format("\t\t\t\t\t\t\t\t\t\t   #   ORDER MEMBERS DETAILS   #\n");
         msg += String.format("\t\t\t\t\t\t\t\t\t\t   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
         msg += String.format("%s\n", BORDER);
         System.out.print(msg);
-        System.out.printf("%s %20s %28s %27s %50s %67s\n", "No.", "AccountID", "Buyer Name", "Gender", "Address", "Phone Number");
-        System.out.printf("%s %20s %28s %27s %77s %40s\n", "---", "---------", "----------", "------", "--------------------------------------------------------", "------------");
+        System.out.printf("%s %20s %26s %27s %50s %67s\n", "No.", "AccountID", "Buyer Name", "Gender", "Address", "Phone Number");
+        System.out.printf("%s %20s %28s %25s %77s %40s\n", "---", "---------", "-------------", "------", "--------------------------------------------------------", "------------");
 
         for (int position = 1; position <= orderMembersList.getMemberAmount(); position++) {
             Customer member = orderMembersList.getMember(position);
-            System.out.printf("%d. %20s %28s %25c %80s %40s\n", position, member.getId(), member.getName(), member.getGender(), member.getAddress(), member.getPhoneNumber());
+            System.out.printf("%d. %20s %28s %23c %80s %40s\n", position, member.getId(), member.getName(), member.getGender(), member.getAddress(), member.getPhoneNumber());
             System.out.printf("--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
         }
     }
@@ -462,12 +474,17 @@ public class GroupBuyClient {
         int no = 0;
         boolean wrongPosition = true;
         ShippingArrayList<Shipping> databaseShippingList = database.getShippingList();
-        System.out.printf("%s\n", BORDER);
-        System.out.printf("%3s %18s %18s %18s\n", "No.", "Courier Service", "Estimated Delivery Day(s)", "Calculated Fee");
-        System.out.printf("%3s %18s %18s %18s\n", "---", "---------------", "-------------------------", "--------------");
+        String msg = String.format("\n\n%s\n", BORDER);
+        msg += String.format("\t\t\t\t\t\t\t\t\t\t   ~~~~~~~~~~~~~~~~~~~~~~~\n");
+        msg += String.format("\t\t\t\t\t\t\t\t\t\t   #   COURIER SERVICE   #\n");
+        msg += String.format("\t\t\t\t\t\t\t\t\t\t   ~~~~~~~~~~~~~~~~~~~~~~~\n");
+        msg += String.format("%s\n", BORDER);
+        System.out.println(msg);
+        System.out.printf("%3s %48s %55s %40s\n", "No.", "Courier Service", "Estimated Delivery Day(s)", "Calculated Fee(RM)");
+        System.out.printf("%3s %48s %55s %40s\n", "---", "---------------", "-------------------------", "------------------");
         for (int position = 1; position <= databaseShippingList.getNumberOfShipping(); position++) {
             Shipping shipping = databaseShippingList.readShipping(position);
-            System.out.printf("%d. %13s %20s %25.2f\n", ++no, shipping.getName(), shipping.getDeliveryTime(), shipping.getFee());
+            System.out.printf("%d. %47s %47s %45.2f\n", ++no, shipping.getName(), shipping.getDeliveryTime(), shipping.getFee());
         }
         do {
             System.out.printf("\n%s\n", SHORT_LINE);
@@ -504,8 +521,8 @@ public class GroupBuyClient {
         msg += String.format("\t\t\t\t\t\t\t\t\t\t   #   JOINED GROUPS   #\n");
         msg += String.format("\t\t\t\t\t\t\t\t\t\t   ~~~~~~~~~~~~~~~~~~~~~\n");
         msg += String.format("%s\n", BORDER);
-        msg += String.format("%3s %15s %18s %46s %42s %18s %17s %20s %11s\n", "No.", "OrderID", "Product Name", "Collect Address", "Buyer Joined", "Total/Buyer(RM)", "Created date", "Time Left(hour)", "Status");
-        msg += String.format("%3s %15s %18s %68s %20s %18s %19s %18s %13s\n", "---", "-------", "------------", "----------------------------------------------------------", "-------------", "---------------", "----------------", "----------------", "---------");
+        msg += String.format("%3s %15s %18s %18s %46s %42s %18s %20s %11s\n", "No.", "OrderID", "Product Name", "Leader Name", "Collect Address", "Leader Contact", "Total/Buyer(RM)", "Time Left(hour)", "Status");
+        msg += String.format("%3s %15s %18s %20s %66s %20s %18s %20s %12s\n", "---", "-------", "------------", "---------------", "----------------------------------------------------------", "--------------", "---------------", "---------------", "---------");
         for (int position = 1; position <= databaseOrderList.size(); position++) {
             Order order = databaseOrderList.viewElement(position);
             CustomerArrayList<Customer> orderMembers = order.getOrderMembersList();
@@ -514,7 +531,10 @@ public class GroupBuyClient {
             for (int membersPosition = 2; membersPosition <= orderMembers.getMemberAmount(); membersPosition++) {
                 if (orderMembers.getMember(membersPosition).getId().equals(loginCustomer.getId())) {
                     joinedOrderListByLoginAccount.add(order);
-                    msg += String.format("%d. %15s %18s %68s %14d/%-3d %16.2f %24s %12s %19s\n", ++no, order.getId(), itemGroup.getName(), leader.getAddress(), order.getOrderMembersList().getMemberAmount(), order.getMaxSlot(), itemGroup.getPrice() + ((order.getShipping() == null) ? 0 : order.getShipping().getFee()), order.getDateInFormat(order.getCreateDate()), order.calculateTimeLeft(), order.getStatus());
+                    msg += String.format("%d. %15s %18s %19s %68s %19s %14.2f %18d %19s\n", ++no, order.getId(), itemGroup.getName(), leader.getName(), leader.getAddress(), leader.getPhoneNumber(), itemGroup.getPrice() + ((order.getShipping() == null) ? 0 : order.getShipping().getFee()),
+                            order.calculateTimeLeft(),
+                            order.getStatus()
+                    );
                 }
             }
         }
@@ -554,7 +574,7 @@ public class GroupBuyClient {
         System.out.printf("Select Related Groups:\n"
                 + "-------------------------\n"
                 + "1. Created Groups/Orders\n"
-                + "2. Joined Groups/Orders\n"
+                + "2. Joined  Groups/Orders\n"
                 + "0. Back\n"
                 + "> ");
         return scan.nextInt();
@@ -568,18 +588,18 @@ public class GroupBuyClient {
         int no = 0;
 
         String msg = String.format("%s\n", BORDER);
-        msg += String.format("\t\t\t\t\t\t\t\t\t\t   ~~~~~~~~~~~~~~~~~~~\n");
-        msg += String.format("\t\t\t\t\t\t\t\t\t\t   #   SEARCH ITEM   #\n");
-        msg += String.format("\t\t\t\t\t\t\t\t\t\t   ~~~~~~~~~~~~~~~~~~~\n");
+        msg += String.format("\t\t\t\t\t\t\t\t\t\t   ~~~~~~~~~~~~~~~~~~~~~~\n");
+        msg += String.format("\t\t\t\t\t\t\t\t\t\t   #   SEARCH PRODUCT   #\n");
+        msg += String.format("\t\t\t\t\t\t\t\t\t\t   ~~~~~~~~~~~~~~~~~~~~~~\n");
         msg += String.format("%s\n", BORDER);
-        msg += String.format("%3s %16s %20s %16s \n", "No.", "Min Buyer", "Product Name", "Price(RM)");
-        msg += String.format("%3s %16s %20s %16s \n", "---", "---------", "------------", "---------");
+        msg += String.format("%3s %36s %60s %60s \n", "No.", "Min Buyer", "Product Name", "Price(RM)");
+        msg += String.format("%3s %36s %62s %58s \n", "---", "---------", "----------------", "---------");
 
         for (int position = 1; position <= numItemGroup; position++) {
             ItemGroup itemGroup = databaseItemGroupList.view(position);
             if (itemGroup.getName().toLowerCase().contains(keyword.toLowerCase())) {
                 itemGroupListByKeyword.add(itemGroup);
-                msg += String.format("%d. %13d %24s %16.2f\n", ++no, itemGroup.getMinimuimBuyer(), itemGroup.getName(), itemGroup.getPrice());
+                msg += String.format("%d. %33d %64s %58.2f\n", ++no, itemGroup.getMinimuimBuyer(), itemGroup.getName(), itemGroup.getPrice());
             }
         }
 
@@ -611,13 +631,13 @@ public class GroupBuyClient {
         int no = 0;
         JoeLinkedList<Order> databaseOrderList = database.getOrderList();
         JoeLinkedList<Order> orderListByItemGroupId = new JoeLinkedList<>();
-        String msg = String.format("%s\n", BORDER);
-        msg += String.format("\t\t\t\t\t\t\t\t\t\t   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
-        msg += String.format("\t\t\t\t\t\t\t\t\t\t   #   ITEM: %-15s   #\n", "Tarkov POE Foever".toUpperCase());
-        msg += String.format("\t\t\t\t\t\t\t\t\t\t   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+        String msg = String.format("\n\n%s\n", BORDER);
+        msg += String.format("\t\t\t\t\t\t\t\t\t\t   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+        msg += String.format("\t\t\t\t\t\t\t\t\t\t   #   ITEM: %-15s   #\n", itemGroup.getName().toUpperCase());
+        msg += String.format("\t\t\t\t\t\t\t\t\t\t   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
         msg += String.format("%s\n", BORDER);
-        msg += String.format("%3s %16s %50s %45s %18s\n", "No.", "Leader", "Collect Address", "Time Left(hour)", "Buyer Joined");
-        msg += String.format("%3s %18s %70s %23s %20s\n", "---", "-----------", "----------------------------------------------------------", "---------------", "---------------");
+        msg += String.format("%3s %38s %65s %48s %28s\n", "No.", "Leader Name", "Collect Address", "Time Left(hour)", "Buyer Joined");
+        msg += String.format("%3s %38s %85s %28s %30s\n", "---", "-----------", "----------------------------------------------------------", "---------------", "---------------");
 
         for (int position = 1; position <= databaseOrderList.size(); position++) {
             Order order = databaseOrderList.viewElement(position);
@@ -631,7 +651,7 @@ public class GroupBuyClient {
                 if (!foundMembers) {
                     orderListByItemGroupId.add(order);
                     Customer leader = order.getOrderMembersList().getMember();
-                    msg += String.format("%d. %18s %70s %17d %18d/%-3d\n", ++no, leader.getName(), leader.getAddress(), order.calculateTimeLeft(), order.getOrderMembersList().getMemberAmount(), order.getMaxSlot());
+                    msg += String.format("%d. %38s %85s %22d %30d/%-3d\n", ++no, leader.getName(), leader.getAddress(), order.calculateTimeLeft(), order.getOrderMembersList().getMemberAmount(), order.getMaxSlot());
                 }
             }
         }
@@ -702,13 +722,13 @@ public class GroupBuyClient {
     public void displayDetailsOrder(Order order) {
         Customer leader = order.getOrderMembersList().getMember();
         ItemGroup itemGroup = order.getItemGroup();
-        System.out.printf("%s\n", BORDER);
-        System.out.printf("\t\t\t\t\t\t\t\t\t       Group Buying Details                                     Order No\t: %s\n", order.getId());
-        System.out.printf("\t\t\t\t\t\t\t\t\t   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+        System.out.printf("\n\n%s\n", BORDER);
+        System.out.printf("\t\t\t\t\t\t\t\t\t\t\t       Group Buying Details                                             Order No\t: %s\n", order.getId());
+        System.out.printf("\t\t\t\t\t\t\t\t\t\t\t   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
 
-        String detailMsg = String.format("Leader\t\t\t: %-95s \t\tStatus\t\t: %s\n"
-                + "Collect Address\t\t: %-95s \t\tTime Left\t: %02d hour(s)\n"
-                + "Contact Number\t\t: %-95s \t\tEnd Date\t: ", leader.getName(), order.getStatus(), leader.getAddress(), order.calculateTimeLeft(), leader.getPhoneNumber());
+        String detailMsg = String.format("Leader Name\t\t: %-95s \t\t\t\t\tStatus\t\t: %s\n"
+                + "Collect Address\t\t: %-95s \t\t\t\t\tTime Left\t: %02d hour(s)\n"
+                + "Contact Number\t\t: %-95s \t\t\t\t\tEnd Date\t: ", leader.getName(), order.getStatus(), leader.getAddress(), order.calculateTimeLeft(), leader.getPhoneNumber());
 
         if (order.getStatus().contains("Completed")) {
             detailMsg += String.format("%s\n", order.getDateInFormat(order.getEndDate()));
@@ -716,7 +736,7 @@ public class GroupBuyClient {
             detailMsg += String.format("%s\n", "-");
         }
 
-        detailMsg += String.format("Product Name\t\t: %-95s \t\tCreate Date\t: %s\n"
+        detailMsg += String.format("Product Name\t\t: %-95s \t\t\t\t\tCreate Date\t: %s\n"
                 + "Minimum Buyer Needed\t: %d\n"
                 + "Buyer Joined\t\t: %d/%-3d\n", itemGroup.getName(), order.getDateInFormat(order.getCreateDate()), itemGroup.getMinimuimBuyer(), order.getOrderMembersList().getMemberAmount(), order.getMaxSlot());
 
@@ -724,7 +744,7 @@ public class GroupBuyClient {
                 + "SubTotal\t\t: RM%.2f (%.2f*%d)\n", "--------------------------------------------------", itemGroup.getPrice() * order.getQuantity(), itemGroup.getPrice(), order.getQuantity()));
 
         if (order.getShipping() != null) {
-            detailMsg += (String.format("Shipping Fee\t\t: RM%.2f (%s)\n"
+            detailMsg += (String.format("Shipping Fee\t\t: RM%.2f #%s#\n"
                     + "Total\t\t\t: RM%.2f\n"
                     + "Total/Buyer\t\t: RM%.2f\n", order.getShipping().calculateFee(order.getQuantity()), order.getShipping().getName(), order.getTotal(), itemGroup.getPrice() + order.getShipping().getFee()));
         }

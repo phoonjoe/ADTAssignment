@@ -58,7 +58,7 @@ public class Database {
 
         // ============Order============
         orderList = new JoeLinkedList<>();
-        orderList.add(new Order(itemGroupList.view(2), customerList.getMember(1), new Date(currentDate.getTime() - MILLIS_IN_A_HOUR), 4));         //OR001
+        orderList.add(new Order(itemGroupList.view(1), customerList.getMember(1), new Date(currentDate.getTime() - MILLIS_IN_A_HOUR), 4));         //OR001
         orderList.add(new Order(itemGroupList.view(1), customerList.getMember(2), new Date(currentDate.getTime() - MILLIS_IN_A_HOUR * 10), 3));    //OR002
         orderList.add(new Order(itemGroupList.view(2), customerList.getMember(3), new Date(currentDate.getTime() - MILLIS_IN_A_HOUR * 23), 5));    //OR003
         orderList.add(new Order(itemGroupList.view(2), customerList.getMember(3), new Date(currentDate.getTime() - MILLIS_IN_A_HOUR * 24), 5));    //OR004
